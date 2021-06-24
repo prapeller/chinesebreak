@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+	<h1>Language:</h1>
+	<p>{{ lang }}</p>
+
+	<form method="POST">
+		{{ name_form.hidden_tag() }}
+		{{ name_form.name.label(class="form-label") }} {{ name_form.name(class="form-control") }}<br>
+		{{ name_form.update }}
+
+	</form>
+
+	<div>
+		<form method="POST">
+			{{ button_delete.hidden_tag() }}
+			{{ button_delete.delete }}
+		</form>
+	</div>
+	<br>
+
+	<h3>Courses:</h3>
+	{% for course in courses %}
+
+		<ul>
+			<li>
+				<a href="{{ url_for('structure.course', course_id=course.id) }}">{{ course }}</a>
+			</li>
+		</ul>
+
+	{% endfor %}
+
+	<div>
+		<form method="POST">
+			{{ button_add.hidden_tag() }}
+			{{ button_add.add }}
+		</form>
+
+	</div>
+
+
+{% endblock %}

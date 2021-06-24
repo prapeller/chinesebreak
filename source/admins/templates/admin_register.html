@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+	<form method="post" >
+		{{ form.hidden_tag() }}
+
+		{{ form.email.label(class="form-label") }} {{ form.email(class="form-control") }}<br>
+		{{ form.name.label(class="form-label") }} {{ form.name(class="form-control") }}<br>
+		{{ form.password.label(class="form-label") }} {{ form.password(class="form-control") }}<br>
+		{{ form.cnf_password.label(class="form-label") }} {{ form.cnf_password(class="form-control") }}<br>
+		{{ form.submit }}
+
+	</form>
+
+{% endblock %}

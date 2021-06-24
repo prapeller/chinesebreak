@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+	<h1>Structure:</h1>
+	<br>
+	<h3>Languages:</h3>
+	{% for lang in langs %}
+
+		<ul>
+			<li>
+				<a href="{{ url_for('structure.lang', lang_id=lang.id) }}">{{ lang }}</a>
+			</li>
+		</ul>
+
+	{% endfor %}
+
+
+	<form method="POST">
+		{{ button_add.hidden_tag() }}
+		{{ button_add.add }}
+	</form>
+
+{% endblock %}

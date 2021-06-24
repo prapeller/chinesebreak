@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+	<h1>Course:</h1>
+	<p>{{ course }}</p>
+
+	<form method="POST">
+		{{ name_form.hidden_tag() }}
+		{{ name_form.name.label(class="form-label") }} {{ name_form.name(class="form-control") }}<br>
+		{{ name_form.update }}
+
+	</form>
+
+	<div>
+		<form method="POST">
+			{{ button_delete.hidden_tag() }}
+			{{ button_delete.delete }}
+		</form>
+	</div>
+	<br>
+	<h3>Topics:</h3>
+	{% for topic in topics %}
+
+		<ul>
+			<li>
+				<a href="{{ url_for('structure.topic', topic_id=topic.id) }}">{{ topic }}</a>
+			</li>
+		</ul>
+
+	{% endfor %}
+
+	<div>
+		<form method="POST">
+			{{ button_add.hidden_tag() }}
+			{{ button_add.add }}
+		</form>
+
+	</div>
+
+
+{% endblock %}

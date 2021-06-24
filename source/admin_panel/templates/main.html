@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+	<h1 class="display-5 fw-bold">Admin panel</h1>
+
+	{% if current_user.is_authenticated %}
+
+		<p>hello, {{ current_user.name }}</p>
+
+	{% else %}
+
+		<p>login to continue</p>
+
+	{% endif %}
+
+{% endblock %}
