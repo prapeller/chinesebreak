@@ -177,19 +177,19 @@ def task(task_id):
                                task_type_name=task_type_name,
                                button_delete=button_delete,
                                )
-    if task_type_id == 2:
+    elif task_type_id == 2:
         return render_template('tasks/2_word_char_from_lang.html',
                                task=task,
                                task_type_name=task_type_name,
                                button_delete=button_delete,
                                )
-    if task_type_id == 3:
+    elif task_type_id == 3:
         return render_template('tasks/3_word_lang_from_char.html',
                                task=task,
                                task_type_name=task_type_name,
                                button_delete=button_delete,
                                )
-    if task_type_id == 4:
+    elif task_type_id == 4:
         return render_template('tasks/4_word_char_from_video.html',
                                task=task,
                                task_type_name=task_type_name,
@@ -236,9 +236,3 @@ def task(task_id):
                                button_delete=button_delete,
                                )
 
-    elif task_type_id == 11:
-        return render_template('tasks/11.html',
-                               task=task,
-                               task_type_name=task_type_name,
-                               button_delete=button_delete,
-                               )
