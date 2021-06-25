@@ -18,7 +18,9 @@
 
 	<form method="POST">
 		{{ button_add.hidden_tag() }}
-		{{ button_add.add }}
+		<div class="d-grid gap-2">
+			{{ button_add.add(class="btn btn-primary") }}
+		</div>
 	</form>
 
 {% endblock %}

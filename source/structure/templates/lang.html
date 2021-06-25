@@ -7,18 +7,16 @@
 
 	<form method="POST">
 		{{ name_form.hidden_tag() }}
-		{{ name_form.name.label(class="form-label") }} {{ name_form.name(class="form-control") }}<br>
+		{{ name_form.name.label(class="form-label") }} {{ name_form.name(class="form-control") }}
 		{{ name_form.update }}
-
 	</form>
 
-	<div>
-		<form method="POST">
-			{{ button_delete.hidden_tag() }}
-			{{ button_delete.delete }}
-		</form>
-	</div>
-	<br>
+	<form method="POST">
+		{{ button_delete.hidden_tag() }}
+		<div class="d-grid gap-2">
+			{{ button_delete.delete(class="btn btn-danger") }}
+		</div>
+	</form>
 
 	<h3>Courses:</h3>
 	{% for course in courses %}
@@ -31,13 +29,13 @@
 
 	{% endfor %}
 
-	<div>
-		<form method="POST">
-			{{ button_add.hidden_tag() }}
-			{{ button_add.add }}
-		</form>
+	<form method="POST">
+		{{ button_add.hidden_tag() }}
+		<div class="d-grid gap-2">
+			{{ button_add.add(class="btn btn-primary") }}
+		</div>
+	</form>
 
-	</div>
 
 
 {% endblock %}

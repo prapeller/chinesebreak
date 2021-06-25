@@ -80,7 +80,7 @@ class Course(db.Model):
     published_at = db.Column(db.DateTime)
 
     creator_admin_id = db.Column(db.ForeignKey('admins.id', ondelete='SET NULL', onupdate='CASCADE'), index=True)
-    lang_id = db.Column(db.ForeignKey('langs.id', ondelete='SET NULL', onupdate='CASCADE'), index=True)
+    lang_id = db.Column(db.ForeignKey('langs.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
 
     topics = db.relationship('Topic', backref='course')
 
@@ -107,9 +107,10 @@ class Topic(db.Model):
     media_id = db.Column(db.Integer)
 
     creator_admin_id = db.Column(db.ForeignKey('admins.id', ondelete='SET NULL', onupdate='CASCADE'), index=True)
-    course_id = db.Column(db.ForeignKey('courses.id', ondelete='SET NULL', onupdate='CASCADE'), index=True)
+    course_id = db.Column(db.ForeignKey('courses.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
 
     lessons = db.relationship('Lesson', backref='topic')
+    # media_ids = db.relationship('Media', backref='topic_')
 
     def __init__(self, name, creator_admin_id, course_id):
         self.name = name
@@ -131,9 +132,9 @@ class Lesson(db.Model):
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
 
     creator_admin_id = db.Column(db.ForeignKey('admins.id', ondelete='SET NULL', onupdate='CASCADE'), index=True)
-    topic_id = db.Column(db.ForeignKey('topics.id', ondelete='SET NULL', onupdate='CASCADE'), index=True)
+    topic_id = db.Column(db.ForeignKey('topics.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
 
-    tasks = db.relationship('Task', backref='lesson', cascade='all,delete')
+    tasks = db.relationship('Task', backref='lesson')
 
     def __init__(self, creator_admin_id, topic_id):
         self.creator_admin_id = creator_admin_id
@@ -148,7 +149,7 @@ class Lesson(db.Model):
 class Task(db.Model):
     __tablename__ = 'tasks'
 
-    id = db.Column(db.Integer, primary_key=True, unique=True)
+    id = db.Column(db.Integer, primary_key=True)
     created_at = db.Column(db.DateTime, default=datetime.now())
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
     elements = db.Column(db.JSON, default={
@@ -209,15 +210,18 @@ class Task(db.Model):
                f'creator: {self.creator_admin_id}, \n' \
                f'lesson: {self.lesson_id}, \n'
 
-# class Media(db.Model):
-#     __tablename__ = 'media'
-#
-#     id = db.Column(db.Integer, primary_key=True, unique=True)
-#     name = db.Column(db.String(50), nullable=False, index=True)
-#     type = db.Column(db.Enum('audio', 'video', 'picture', 'vector', 'gif'))
-#     file_path = db.Column(db.String(2083))
-#
-#
+
+class Media(db.Model):
+    __tablename__ = 'media'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False, index=True)
+    type = db.Column(db.Enum('mp4', 'mp3', 'png', 'jpg', 'gif', 'pdf', 'svg'))
+    file_path = db.Column(db.String(2083))
+
+    # topic_id_pic_fk = db.Column(db.ForeignKey('topics.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
+
+
 # class Character(db.Model):
 #     __tablename__ = 'character'
 #

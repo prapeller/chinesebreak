@@ -5,38 +5,44 @@
 	<h1>Topic:</h1>
 	<p>{{ topic }}</p>
 
+	<div align="center">
+		<img src="{{ url_for('static', filename='picture/'+ topic_pic_media_filename) }}" alt="oops">
+	</div>
+
 	<form method="POST">
 		{{ name_form.hidden_tag() }}
-		{{ name_form.name.label(class="form-label") }} {{ name_form.name(class="form-control") }}<br>
+		{{ name_form.name.label(class="form-label") }} {{ name_form.name(class="form-control") }}
 		{{ name_form.update }}
-
 	</form>
 
-	<div>
-		<form method="POST">
-			{{ button_delete.hidden_tag() }}
-			{{ button_delete.delete }}
-		</form>
-	</div>
-	<br>
+	<form method="POST" enctype="multipart/form-data">
+		{{ topic_pic_form.hidden_tag() }}
+		{{ topic_pic_form.picture.label(class="form-label") }} {{ topic_pic_form.picture(class="form-control") }}
+		{{ topic_pic_form.update }}
+	</form>
+
+	<form method="POST">
+		{{ button_delete.hidden_tag() }}
+		<div class="d-grid gap-2">
+			{{ button_delete.delete(class="btn btn-danger") }}
+		</div>
+	</form>
+
 	<h3>Lessons:</h3>
 	{% for lesson in lessons %}
-
 		<ul>
 			<li>
 				<a href="{{ url_for('structure.lesson', lesson_id=lesson.id) }}">{{ lesson }}</a>
 			</li>
 		</ul>
-
 	{% endfor %}
 
-	<div>
-		<form method="POST">
-			{{ button_add.hidden_tag() }}
-			{{ button_add.add }}
-		</form>
-
-	</div>
+	<form method="POST">
+		{{ button_add.hidden_tag() }}
+		<div class="d-grid gap-2">
+			{{ button_add.add(class="btn btn-primary") }}
+		</div>
+	</form>
 
 
 {% endblock %}

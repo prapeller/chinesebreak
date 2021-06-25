@@ -1,14 +1,15 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, SelectField
+from flask_wtf.file import FileField, FileAllowed
+from wtforms import StringField, SubmitField, SelectField, FileField
 from source.admin_panel_models import TaskType
 
 
 class ButtonAddForm(FlaskForm):
-    add = SubmitField('+')
+    add = SubmitField('ADD')
 
 
 class ButtonDeleteForm(FlaskForm):
-    delete = SubmitField('-')
+    delete = SubmitField('DELETE')
 
 
 class NameForm(FlaskForm):
@@ -17,6 +18,11 @@ class NameForm(FlaskForm):
 
 
 class SelectTaskTypeForm(FlaskForm):
-    choices = [(_type.id, f'{_type.id}, {_type.name}') for _type in TaskType.query.all()]
+    choices = [(_type.id, f'{_type.id}) {_type.name}') for _type in TaskType.query.all()]
     type = SelectField('select task type', choices=choices)
-    add = SubmitField('+')
+    add = SubmitField('ADD')
+
+
+class TopicPictureForm(FlaskForm):
+    picture = FileField('picture', validators=[FileAllowed(['png', 'jpg', 'svg'])])
+    update = SubmitField('upload')

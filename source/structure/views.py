@@ -1,15 +1,15 @@
 from flask import render_template, redirect, url_for, Blueprint, session, flash, request
-from source.admin_panel_models import Lang, Course, Topic, Lesson, Task, TaskType
+from source.admin_panel_models import Lang, Course, Topic, Lesson, Task, TaskType, Media
 from flask_login import login_required, current_user
 from source import db
-from source.structure.forms import ButtonAddForm, ButtonDeleteForm, NameForm, SelectTaskTypeForm
+from source.structure.forms import ButtonAddForm, ButtonDeleteForm, NameForm, SelectTaskTypeForm, TopicPictureForm
+from source.structure.picture_handler import add_topic_pic
 
 structure_blueprint = Blueprint('structure', __name__, template_folder='templates')
 
 
 @structure_blueprint.route('/structure', methods=["GET", "POST"])
 def structure():
-
     button_add = ButtonAddForm()
 
     if button_add.validate_on_submit() and button_add.add.data:
@@ -55,7 +55,7 @@ def lang(lang_id):
                            courses=lang.courses,
                            name_form=name_form,
                            button_delete=button_delete,
-                           button_add=button_add,)
+                           button_add=button_add, )
 
 
 @structure_blueprint.route('/course_id_<int:course_id>', methods=["GET", "POST"])
@@ -91,16 +91,19 @@ def course(course_id):
                            topics=course.topics,
                            name_form=name_form,
                            button_delete=button_delete,
-                           button_add=button_add,)
+                           button_add=button_add, )
 
 
 @structure_blueprint.route('/topic_id_<int:topic_id>', methods=["GET", "POST"])
 def topic(topic_id):
     topic = Topic.query.filter_by(id=topic_id).first()
+    topic_pic_media = Media.query.filter_by(id=topic.media_id).first()
+    topic_pic_media_filename = topic_pic_media.name if topic_pic_media else 'none'
 
     name_form = NameForm()
-    button_delete = ButtonDeleteForm()
     button_add = ButtonAddForm()
+    topic_pic_form = TopicPictureForm()
+    button_delete = ButtonDeleteForm()
 
     if name_form.validate_on_submit() and name_form.name.data:
         topic.name = name_form.name.data
@@ -108,6 +111,12 @@ def topic(topic_id):
         flash('update success')
     elif request.method == "GET":
         name_form.name.data = topic.name
+
+    if topic_pic_form.validate_on_submit() and topic_pic_form.picture.data:
+        pic_media = add_topic_pic(pic_upload=topic_pic_form.picture.data, topic=topic)
+        topic.media_id = pic_media.id
+        db.session.commit()
+        return redirect(url_for('structure.topic', topic_id=topic.id))
 
     if button_delete.validate_on_submit() and button_delete.delete.data:
         db.session.delete(topic)
@@ -122,10 +131,12 @@ def topic(topic_id):
 
     return render_template('topic.html',
                            topic=topic,
+                           topic_pic_media_filename=topic_pic_media_filename,
                            lessons=topic.lessons,
                            name_form=name_form,
+                           topic_pic_form=topic_pic_form,
                            button_delete=button_delete,
-                           button_add=button_add,)
+                           button_add=button_add, )
 
 
 @structure_blueprint.route('/lesson_id_<int:lesson_id>', methods=["GET", "POST"])
@@ -146,7 +157,7 @@ def lesson(lesson_id):
         new_task = Task(task_type_id=task_type_id, creator_admin_id=current_user.id, lesson_id=lesson.id)
         db.session.add(new_task)
         db.session.commit()
-        return redirect(url_for('structure.lesson',lesson_id=lesson.id))
+        return redirect(url_for('structure.lesson', lesson_id=lesson.id))
 
     return render_template('lesson.html',
                            lesson=lesson,
@@ -159,7 +170,7 @@ def lesson(lesson_id):
 
 @structure_blueprint.route('/task_id_<int:task_id>', methods=["GET", "POST"])
 def task(task_id):
-    task=Task.query.filter_by(id=task_id).first()
+    task = Task.query.filter_by(id=task_id).first()
     task_type = TaskType.query.filter_by(id=task.task_type_id).first()
     task_type_id = task_type.id
     task_type_name = task_type.name
@@ -177,31 +188,35 @@ def task(task_id):
                                task_type_name=task_type_name,
                                button_delete=button_delete,
                                )
+
     elif task_type_id == 2:
         return render_template('tasks/2_word_char_from_lang.html',
                                task=task,
                                task_type_name=task_type_name,
                                button_delete=button_delete,
                                )
+
     elif task_type_id == 3:
         return render_template('tasks/3_word_lang_from_char.html',
                                task=task,
                                task_type_name=task_type_name,
                                button_delete=button_delete,
                                )
+
     elif task_type_id == 4:
         return render_template('tasks/4_word_char_from_video.html',
                                task=task,
                                task_type_name=task_type_name,
                                button_delete=button_delete,
                                )
+
     elif task_type_id == 5:
         return render_template('tasks/5_word_match.html',
                                task=task,
                                task_type_name=task_type_name,
                                button_delete=button_delete,
                                )
-    
+
     elif task_type_id == 6:
         return render_template('tasks/6_sent_image.html',
                                task=task,
@@ -215,6 +230,7 @@ def task(task_id):
                                task_type_name=task_type_name,
                                button_delete=button_delete,
                                )
+
     elif task_type_id == 8:
         return render_template('tasks/8_sent_lang_from_char.html',
                                task=task,
@@ -235,4 +251,3 @@ def task(task_id):
                                task_type_name=task_type_name,
                                button_delete=button_delete,
                                )
-
