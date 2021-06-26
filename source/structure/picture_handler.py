@@ -25,7 +25,7 @@ def add_topic_pic(pic_upload, topic):
 
         return old_media
     else:
-        new_media = Media(name=storage_filename, type=ext_type, file_path=filepath)
+        new_media = Media(name=storage_filename, type=ext_type, file_path=filepath, topic_picture_fk=topic.id)
         db.session.add(new_media)
         db.session.commit()
 

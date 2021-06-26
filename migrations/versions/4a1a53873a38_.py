@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 1badee252017
+Revision ID: 4a1a53873a38
 Revises: 
-Create Date: 2021-06-24 15:55:18.561830
+Create Date: 2021-06-26 13:41:57.781832
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '1badee252017'
+revision = '4a1a53873a38'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -53,7 +53,7 @@ def upgrade():
     sa.Column('creator_admin_id', sa.Integer(), nullable=True),
     sa.Column('lang_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['creator_admin_id'], ['admins.id'], onupdate='CASCADE', ondelete='SET NULL'),
-    sa.ForeignKeyConstraint(['lang_id'], ['langs.id'], onupdate='CASCADE', ondelete='SET NULL'),
+    sa.ForeignKeyConstraint(['lang_id'], ['langs.id'], onupdate='CASCADE', ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_courses_creator_admin_id'), 'courses', ['creator_admin_id'], unique=False)
@@ -67,7 +67,7 @@ def upgrade():
     sa.Column('media_id', sa.Integer(), nullable=True),
     sa.Column('creator_admin_id', sa.Integer(), nullable=True),
     sa.Column('course_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['course_id'], ['courses.id'], onupdate='CASCADE', ondelete='SET NULL'),
+    sa.ForeignKeyConstraint(['course_id'], ['courses.id'], onupdate='CASCADE', ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['creator_admin_id'], ['admins.id'], onupdate='CASCADE', ondelete='SET NULL'),
     sa.PrimaryKeyConstraint('id')
     )
@@ -81,11 +81,22 @@ def upgrade():
     sa.Column('creator_admin_id', sa.Integer(), nullable=True),
     sa.Column('topic_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['creator_admin_id'], ['admins.id'], onupdate='CASCADE', ondelete='SET NULL'),
-    sa.ForeignKeyConstraint(['topic_id'], ['topics.id'], onupdate='CASCADE', ondelete='SET NULL'),
+    sa.ForeignKeyConstraint(['topic_id'], ['topics.id'], onupdate='CASCADE', ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_lessons_creator_admin_id'), 'lessons', ['creator_admin_id'], unique=False)
     op.create_index(op.f('ix_lessons_topic_id'), 'lessons', ['topic_id'], unique=False)
+    op.create_table('media',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=50), nullable=False),
+    sa.Column('type', sa.Enum('mp4', 'mp3', 'png', 'jpg', 'gif', 'pdf', 'svg'), nullable=True),
+    sa.Column('file_path', sa.String(length=2083), nullable=True),
+    sa.Column('topic_picture_fk', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['topic_picture_fk'], ['topics.id'], onupdate='CASCADE', ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_media_name'), 'media', ['name'], unique=False)
+    op.create_index(op.f('ix_media_topic_picture_fk'), 'media', ['topic_picture_fk'], unique=False)
     op.create_table('tasks',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=True),
@@ -100,9 +111,7 @@ def upgrade():
     sa.ForeignKeyConstraint(['creator_admin_id'], ['admins.id'], onupdate='CASCADE', ondelete='SET NULL'),
     sa.ForeignKeyConstraint(['lesson_id'], ['lessons.id'], onupdate='CASCADE', ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['task_type_id'], ['task_types.id'], onupdate='CASCADE', ondelete='SET NULL'),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('id'),
-    sa.UniqueConstraint('id')
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_tasks_creator_admin_id'), 'tasks', ['creator_admin_id'], unique=False)
     op.create_index(op.f('ix_tasks_lesson_id'), 'tasks', ['lesson_id'], unique=False)
@@ -116,6 +125,9 @@ def downgrade():
     op.drop_index(op.f('ix_tasks_lesson_id'), table_name='tasks')
     op.drop_index(op.f('ix_tasks_creator_admin_id'), table_name='tasks')
     op.drop_table('tasks')
+    op.drop_index(op.f('ix_media_topic_picture_fk'), table_name='media')
+    op.drop_index(op.f('ix_media_name'), table_name='media')
+    op.drop_table('media')
     op.drop_index(op.f('ix_lessons_topic_id'), table_name='lessons')
     op.drop_index(op.f('ix_lessons_creator_admin_id'), table_name='lessons')
     op.drop_table('lessons')

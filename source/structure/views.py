@@ -2,8 +2,9 @@ from flask import render_template, redirect, url_for, Blueprint, session, flash,
 from source.admin_panel_models import Lang, Course, Topic, Lesson, Task, TaskType, Media
 from flask_login import login_required, current_user
 from source import db
-from source.structure.forms import ButtonAddForm, ButtonDeleteForm, NameForm, SelectTaskTypeForm, TopicPictureForm
+from source.structure.forms import ButtonAddForm, ButtonDeleteForm, NameForm, TopicPictureForm
 from source.structure.picture_handler import add_topic_pic
+from source.structure.forms import SelectTaskTypeForm
 
 structure_blueprint = Blueprint('structure', __name__, template_folder='templates')
 
