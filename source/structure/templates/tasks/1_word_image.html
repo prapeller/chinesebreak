@@ -6,12 +6,12 @@
 	<h2>{{ task_type_name }}</h2>
 	<p>{{ task }}</p>
 
-	<div>
-		<form method="POST">
-			{{ button_delete.hidden_tag() }}
-			{{ button_delete.delete }}
-		</form>
-	</div>
+	<form method="POST">
+		{{ button_delete.hidden_tag() }}
+		<div class="d-grid gap-2">
+			{{ button_delete.delete(class="btn btn-danger") }}
+		</div>
+	</form>
 	<br>
 
 

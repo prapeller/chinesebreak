@@ -27,7 +27,9 @@ login_manager.login_message_category = 'info'
 from source.admin_panel.views import admin_panel_blueprint
 from source.admins.views import admins_blueprint
 from source.structure.views import structure_blueprint
+from source.elements.views import elements_blueprint
 
 app.register_blueprint(admin_panel_blueprint)
 app.register_blueprint(admins_blueprint)
 app.register_blueprint(structure_blueprint)
+app.register_blueprint(elements_blueprint)

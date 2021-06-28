@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+	{% for word in words %}
+		<ul>
+			<li>
+				<a href="{{ url_for('elements.word', word_id=word.id) }}">{{ word }}</a>
+			</li>
+		</ul>
+	{% endfor %}
+
+	<form method="POST">
+		{{ button_add.hidden_tag() }}
+		<div class="d-grid gap-2">
+			{{ button_add.add(class="btn btn-primary") }}
+		</div>
+	</form>
+
+
+{% endblock %}

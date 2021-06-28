@@ -104,7 +104,7 @@ class Topic(db.Model):
     name = db.Column(db.String(50), nullable=False, index=True)
     created_at = db.Column(db.DateTime, default=datetime.now())
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
-    media_id = db.Column(db.Integer)
+    image_id = db.Column(db.Integer)
 
     creator_admin_id = db.Column(db.ForeignKey('admins.id', ondelete='SET NULL', onupdate='CASCADE'), index=True)
     course_id = db.Column(db.ForeignKey('courses.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
@@ -211,6 +211,26 @@ class Task(db.Model):
                f'lesson: {self.lesson_id}, \n'
 
 
+class Word(db.Model):
+    __tablename__ = 'words'
+
+    id = db.Column(db.Integer, primary_key=True)
+    char = db.Column(db.String(50), index=True)
+    pinyin = db.Column(db.String(50), index=True)
+    lang = db.Column(db.String(50), index=True)
+    lit = db.Column(db.String(50), index=True)
+
+    image_id = db.Column(db.ForeignKey('media.id'))
+    audio_id = db.Column(db.ForeignKey('media.id'))
+    video_id = db.Column(db.ForeignKey('media.id'))
+    images = db.relationship('Media', foreign_keys=[image_id])
+    audios = db.relationship('Media', foreign_keys=[audio_id])
+    videos = db.relationship('Media', foreign_keys=[video_id])
+
+    def __repr__(self):
+        return f'id: {self.id}, char: {self.char}, pinyin: {self.pinyin}, lang: {self.lang}, lit: {self.lit}'
+
+
 class Media(db.Model):
     __tablename__ = 'media'
 
@@ -219,7 +239,10 @@ class Media(db.Model):
     type = db.Column(db.Enum('mp4', 'mp3', 'png', 'jpg', 'gif', 'pdf', 'svg'))
     file_path = db.Column(db.String(2083))
 
-    topic_picture_fk = db.Column(db.ForeignKey('topics.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
+    topic_image_fk = db.Column(db.ForeignKey('topics.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
+    # word_image_fk = db.Column(db.ForeignKey('words.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
+    # word_audio_fk = db.Column(db.ForeignKey('words.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
+    # word_video_fk = db.Column(db.ForeignKey('words.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
 
 
 # class Character(db.Model):
@@ -255,18 +278,3 @@ class Media(db.Model):
 #     topic = db.relationship('Topic')
 #
 #
-# class Word(db.Model):
-#     __tablename__ = 'word'
-#
-#     id = db.Column(db.Integer, primary_key=True, unique=True)
-#     topic_id = db.Column(db.ForeignKey('topic.id'), index=True)
-#     char = db.Column(db.String(50), index=True)
-#     pinyin = db.Column(db.String(50), index=True)
-#     lang = db.Column(db.String(50), index=True)
-#     lit = db.Column(db.String(50), index=True)
-#     image_media_id = db.Column(db.ForeignKey('media.id'), index=True)
-#     audio_media_id = db.Column(db.ForeignKey('media.id'), index=True)
-#
-#     audio_media = db.relationship('Media', primaryjoin='Word.audio_media_id == Media.id')
-#     image_media = db.relationship('Media', primaryjoin='Word.image_media_id == Media.id')
-#     topic = db.relationship('Topic')

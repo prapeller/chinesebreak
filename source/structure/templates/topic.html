@@ -6,7 +6,8 @@
 	<p>{{ topic }}</p>
 
 	<div align="center">
-		<img src="{{ url_for('static', filename='picture/'+ topic_pic_media_filename) }}" alt="oops">
+		<img src="{{ url_for(endpoint='static', filename='image/' + image_name) }}" class="rounded"
+		     alt="ooops">
 	</div>
 
 	<form method="POST">
@@ -17,7 +18,7 @@
 
 	<form method="POST" enctype="multipart/form-data">
 		{{ topic_pic_form.hidden_tag() }}
-		{{ topic_pic_form.picture.label(class="form-label") }} {{ topic_pic_form.picture(class="form-control") }}
+		{{ topic_pic_form.image.label(class="form-label") }} {{ topic_pic_form.image(class="form-control") }}
 		{{ topic_pic_form.update }}
 	</form>
 

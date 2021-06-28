@@ -17,12 +17,12 @@ class NameForm(FlaskForm):
     update = SubmitField('update')
 
 
+class TopicImageForm(FlaskForm):
+    image = FileField('image', validators=[FileAllowed(['png', 'jpg', 'svg'])])
+    update = SubmitField('upload')
+
+
 class SelectTaskTypeForm(FlaskForm):
     choices = [(_type.id, f'{_type.id}) {_type.name}') for _type in TaskType.query.all()]
     type = SelectField('select task type', choices=choices)
     add = SubmitField('ADD')
-
-
-class TopicPictureForm(FlaskForm):
-    picture = FileField('picture', validators=[FileAllowed(['png', 'jpg', 'svg'])])
-    update = SubmitField('upload')
