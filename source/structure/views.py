@@ -167,7 +167,6 @@ def lesson(lesson_id):
                            button_delete=button_delete,
                            select_type_form=select_type_form,
                            button_add=button_add,
-                           color_class="p-3 mb-2 bg-warning text-dark",
                            )
 
 

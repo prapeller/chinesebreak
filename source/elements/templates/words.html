@@ -6,6 +6,9 @@
 {% block content %}
 
 	<h1>Words:</h1>
+
+
+
 	{% for word in words %}
 		<div class="list-group">
 			<a href="{{ url_for('elements.word', word_id=word.id) }}"

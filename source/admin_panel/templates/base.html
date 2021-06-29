@@ -21,9 +21,6 @@
 </head>
 <body>
 
-<!-- Latest Sortable -->
-<script src="http://SortableJS.github.io/Sortable/Sortable.js"></script>
-
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
 	<div class="container-fluid">
 		<a class="navbar-brand" href="{{ url_for('admin_panel.main') }}">Admin panel</a>
@@ -62,6 +59,12 @@
 					<li class="nav-item"><a class="nav-link" href="{{ url_for('admins.login') }}">Login</a></li>
 				{% endif %}
 			</ul>
+
+			<form class="d-flex nav-item my-lg-0" method="GET">
+				<input class="form-control me-2" type="search" placeholder="Search" name="search_key">
+				<button class="btn btn-outline-success" type="submit">Search</button>
+			</form>
+
 		</div>
 	</div>
 </nav>
@@ -84,9 +87,12 @@
 	</div>
 </div>
 
+<!-- Latest Sortable -->
+<script src="http://SortableJS.github.io/Sortable/Sortable.js"></script>
+
 {#sortableList#}
 <script>
-    Sortable.create(sortableList) ;
+    Sortable.create(sortableList);
 </script>
 
 </body>
