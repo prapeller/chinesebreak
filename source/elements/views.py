@@ -8,7 +8,6 @@ elements_blueprint = Blueprint('elements', __name__, template_folder='templates'
 
 @elements_blueprint.route('/words', methods=['GET', 'POST'])
 def words():
-
     button_add = ButtonAddForm()
 
     if button_add.validate_on_submit() and button_add.add.data:
@@ -26,7 +25,6 @@ def words():
 @elements_blueprint.route('/words_<int:word_id>', methods=['GET', 'POST'])
 def word(word_id):
     word = Word.query.filter_by(id=word_id).first()
-
 
     return render_template('word.html',
                            word=word)

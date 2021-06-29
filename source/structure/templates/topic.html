@@ -1,4 +1,7 @@
 {% extends 'base.html' %}
+{% block title %}
+	topic
+{% endblock %}
 
 {% block content %}
 
@@ -30,13 +33,13 @@
 	</form>
 
 	<h3>Lessons:</h3>
-	{% for lesson in lessons %}
-		<ul>
-			<li>
-				<a href="{{ url_for('structure.lesson', lesson_id=lesson.id) }}">{{ lesson }}</a>
-			</li>
-		</ul>
-	{% endfor %}
+	<div class="list-group">
+		{% for lesson in lessons %}
+			<a href="{{ url_for('structure.lesson', lesson_id=lesson.id) }}"
+			   class="list-group-item list-group-item-action">{{ lesson }}</a>
+		{% endfor %}
+	</div>
+	<br>
 
 	<form method="POST">
 		{{ button_add.hidden_tag() }}

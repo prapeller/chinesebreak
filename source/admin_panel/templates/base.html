@@ -4,7 +4,10 @@
 	<meta name="viewport"
 	      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title>Admin panel</title>
+	<title>
+		{% block title %}
+		{% endblock %}
+	</title>
 
 	<!-- CSS only -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -18,6 +21,9 @@
 </head>
 <body>
 
+<!-- Latest Sortable -->
+<script src="http://SortableJS.github.io/Sortable/Sortable.js"></script>
+
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
 	<div class="container-fluid">
 		<a class="navbar-brand" href="{{ url_for('admin_panel.main') }}">Admin panel</a>
@@ -28,22 +34,34 @@
 		</button>
 
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
-
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-				<li class="nav-item"><a class="nav-link active" aria-current="page"
-				                        href="{{ url_for('admin_panel.info') }}">Info</a></li>
+				<li class="nav-item">
+					<a class="nav-link active" aria-current="page" href="{{ url_for('admin_panel.info') }}">Info</a>
+				</li>
 
 				{% if current_user.is_authenticated %}
 					<li class="nav-item"><a class="nav-link" href="{{ url_for('admins.admin') }}">Admin</a></li>
 					<li class="nav-item"><a class="nav-link" href="{{ url_for('admins.logout') }}">Logout</a></li>
-					<li class="nav-item"><a class="nav-link" href="{{ url_for('structure.structure') }}">Structure</a></li>
-					<li class="nav-item"><a class="nav-link" href="#">Elements</a></li>
-					{% else %}
+					<li class="nav-item"><a class="nav-link" href="{{ url_for('structure.structure') }}">Structure</a>
+					</li>
+
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+						   data-bs-toggle="dropdown" aria-expanded="false">
+							Elements
+						</a>
+						<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+							<li><a class="dropdown-item" href="{{ url_for('elements.words') }}">Words</a></li>
+							<li><a class="dropdown-item" href="#">Characters</a></li>
+							<li><a class="dropdown-item" href="#">Grammars</a></li>
+						</ul>
+					</li>
+
+				{% else %}
 					<li class="nav-item"><a class="nav-link" href="{{ url_for('admins.register') }}">Register</a></li>
 					<li class="nav-item"><a class="nav-link" href="{{ url_for('admins.login') }}">Login</a></li>
 				{% endif %}
 			</ul>
-
 		</div>
 	</div>
 </nav>
@@ -51,13 +69,10 @@
 {% with messages = get_flashed_messages() %}
 	{% if messages %}
 		{% for msg in messages %}
-
 			<div class="alert alert-warning alert-dismissible fade show" role="alert">
 				<strong>Alert!</strong> {{ msg }}
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 			</div>
-
-
 		{% endfor %}
 	{% endif %}
 {% endwith %}
@@ -69,6 +84,10 @@
 	</div>
 </div>
 
+{#sortableList#}
+<script>
+    Sortable.create(sortableList) ;
+</script>
 
 </body>
 </html>

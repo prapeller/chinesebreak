@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, SubmitField, SelectField, FileField
+from wtforms import Form, StringField, SubmitField, SelectField, FileField
 from source.admin_panel_models import TaskType
 
 
@@ -15,3 +15,7 @@ class ButtonDeleteForm(FlaskForm):
 class NameForm(FlaskForm):
     name = StringField('name')
     update = SubmitField('update')
+
+
+class SearchForm(Form):
+    search = StringField('search')

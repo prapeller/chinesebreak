@@ -9,7 +9,7 @@ admins_blueprint = Blueprint('admins', __name__, template_folder='templates')
 
 
 # register_managers
-@admins_blueprint.route('/admin_panel/register', methods=["GET", "POST"])
+@admins_blueprint.route('/register', methods=["GET", "POST"])
 def register():
     form = AdminRegisterForm()
 
@@ -25,7 +25,7 @@ def register():
 
 
 # login
-@admins_blueprint.route('/admin_panel/login', methods=["GET", "POST"])
+@admins_blueprint.route('/login', methods=["GET", "POST"])
 def login():
     form = AdminLoginForm()
 
@@ -45,7 +45,7 @@ def login():
 
 
 # logout
-@admins_blueprint.route('/admin_panel/logout', methods=["GET", "POST"])
+@admins_blueprint.route('/logout', methods=["GET", "POST"])
 @login_required
 def logout():
     logout_user()
@@ -54,7 +54,7 @@ def logout():
 
 
 # admin page (update)
-@admins_blueprint.route('/admin_panel/admin', methods=["GET", "POST"])
+@admins_blueprint.route('/admin', methods=["GET", "POST"])
 @login_required
 def admin():
     form = AdminUpdateForm()

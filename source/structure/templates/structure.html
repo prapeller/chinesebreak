@@ -1,19 +1,20 @@
 {% extends 'base.html' %}
+{% block title %}
+	structure
+{% endblock %}
 
 {% block content %}
 
 	<h1>Structure:</h1>
 	<br>
 	<h3>Languages:</h3>
-	{% for lang in langs %}
-
-		<ul>
-			<li>
-				<a href="{{ url_for('structure.lang', lang_id=lang.id) }}">{{ lang }}</a>
-			</li>
-		</ul>
-
-	{% endfor %}
+	<div class="list-group">
+		{% for lang in langs %}
+			<a href="{{ url_for('structure.lang', lang_id=lang.id) }}"
+			   class="list-group-item list-group-item-action">{{ lang }}</a>
+		{% endfor %}
+	</div>
+	<br>
 
 
 	<form method="POST">

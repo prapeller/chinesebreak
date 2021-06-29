@@ -9,7 +9,7 @@ from source.structure.forms import SelectTaskTypeForm
 structure_blueprint = Blueprint('structure', __name__, template_folder='templates')
 
 
-@structure_blueprint.route('/structure', methods=["GET", "POST"])
+@structure_blueprint.route('/', methods=["GET", "POST"])
 def structure():
     button_add = ButtonAddForm()
 
@@ -88,6 +88,7 @@ def course(course_id):
         return redirect(url_for('structure.topic', topic_id=new_topic.id))
 
     return render_template('course.html',
+                           Media=Media,
                            course=course,
                            topics=course.topics,
                            name_form=name_form,
@@ -166,6 +167,7 @@ def lesson(lesson_id):
                            button_delete=button_delete,
                            select_type_form=select_type_form,
                            button_add=button_add,
+                           color_class="p-3 mb-2 bg-warning text-dark",
                            )
 
 

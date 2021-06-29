@@ -1,4 +1,7 @@
 {% extends 'base.html' %}
+{% block title %}
+	lesson
+{% endblock %}
 
 {% block content %}
 
@@ -13,14 +16,26 @@
 	</form>
 
 	<h3>Tasks:</h3>
-	{% for task in tasks %}
-		<ul>
-			<li>
-				<a href="{{ url_for('structure.task', task_id=task.id) }}">{{ task }}</a>
-			</li>
-		</ul>
-	{% endfor %}
+	<div id="sortableList" class="list-group">
+{#	<div id="listWithHandle" class="list-group">#}
+		{% for task in tasks %}
+				{% if task.task_type_id in [1, 2, 3, 4, 5] %}
+					<a href="{{ url_for('structure.task', task_id=task.id) }}"
+					   class="list-group-item list-group-item-action list-group-item-warning">{{ task }}</a>
+				{% endif %}
 
+				{% if task.task_type_id in [6, 7, 8, 9, 10, 11, 12, 13, 14] %}
+					<a href="{{ url_for('structure.task', task_id=task.id) }}"
+					   class="list-group-item list-group-item-action list-group-item-danger">{{ task }}</a>
+				{% endif %}
+
+				{% if task.task_type_id in [15, 16, 17, 18] %}
+					<a href="{{ url_for('structure.task', task_id=task.id) }}"
+					   class="list-group-item list-group-item-action list-group-item-primary">{{ task }}</a>
+				{% endif %}
+		{% endfor %}
+	</div>
+	<br>
 
 	<div>
 		<form method="POST">
