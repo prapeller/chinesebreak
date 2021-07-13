@@ -5,9 +5,9 @@
 
 {% block content %}
 
-	<h1>Structure:</h1>
+	<h1 class="display-5 fw-bold">Structure</h1>
 	<br>
-	<h3>Languages:</h3>
+	<p class="display-6"> Languages:</p>
 	<div class="list-group">
 		{% for lang in langs %}
 			<a href="{{ url_for('structure.lang', lang_id=lang.id) }}"
@@ -19,8 +19,8 @@
 
 	<form method="POST">
 		{{ button_add.hidden_tag() }}
-		<div class="d-grid gap-2">
-			{{ button_add.add(class="btn btn-primary") }}
+		<div class="d-grid">
+			{{ button_add.add(class="btn btn_add") }}
 		</div>
 	</form>
 

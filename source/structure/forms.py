@@ -5,11 +5,11 @@ from source.admin_panel_models import TaskType
 
 
 class ButtonAddForm(FlaskForm):
-    add = SubmitField('ADD')
+    add = SubmitField(' ')
 
 
 class ButtonDeleteForm(FlaskForm):
-    delete = SubmitField('DELETE')
+    delete = SubmitField(' ')
 
 
 class NameForm(FlaskForm):
@@ -17,12 +17,12 @@ class NameForm(FlaskForm):
     update = SubmitField('update')
 
 
-class TopicImageForm(FlaskForm):
+class UploadImageForm(FlaskForm):
     image = FileField('image', validators=[FileAllowed(['png', 'jpg', 'svg'])])
-    update = SubmitField('upload')
+    upload = SubmitField('upload')
 
 
 class SelectTaskTypeForm(FlaskForm):
     choices = [(_type.id, f'{_type.id}) {_type.name}') for _type in TaskType.query.all()]
     type = SelectField('select task type', choices=choices)
-    add = SubmitField('ADD')
+    add = SubmitField(' ')

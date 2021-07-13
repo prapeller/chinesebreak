@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 76672f30f73b
+Revision ID: 352e784a8eb9
 Revises: 
-Create Date: 2021-06-28 22:37:29.743155
+Create Date: 2021-07-13 16:21:36.736228
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '76672f30f73b'
+revision = '352e784a8eb9'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -28,11 +28,49 @@ def upgrade():
     sa.UniqueConstraint('email'),
     sa.UniqueConstraint('email')
     )
+    op.create_table('media',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=50), nullable=False),
+    sa.Column('type', sa.Enum('mp4', 'mp3', 'png', 'jpg', 'gif', 'pdf', 'svg'), nullable=True),
+    sa.Column('file_path', sa.String(length=2083), nullable=True),
+    sa.Column('topic_image_fk', sa.Integer(), nullable=True),
+    sa.Column('word_image_fk', sa.Integer(), nullable=True),
+    sa.Column('word_audio_fk', sa.Integer(), nullable=True),
+    sa.Column('word_video_fk', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['topic_image_fk'], ['topics.id'], onupdate='CASCADE', ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['word_audio_fk'], ['words.id'], onupdate='CASCADE', ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['word_image_fk'], ['words.id'], onupdate='CASCADE', ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['word_video_fk'], ['words.id'], onupdate='CASCADE', ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_media_name'), 'media', ['name'], unique=False)
+    op.create_index(op.f('ix_media_topic_image_fk'), 'media', ['topic_image_fk'], unique=False)
+    op.create_index(op.f('ix_media_word_audio_fk'), 'media', ['word_audio_fk'], unique=False)
+    op.create_index(op.f('ix_media_word_image_fk'), 'media', ['word_image_fk'], unique=False)
+    op.create_index(op.f('ix_media_word_video_fk'), 'media', ['word_video_fk'], unique=False)
     op.create_table('task_types',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=50), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('words',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('char', sa.String(length=50), nullable=True),
+    sa.Column('pinyin', sa.String(length=50), nullable=True),
+    sa.Column('lang', sa.String(length=50), nullable=True),
+    sa.Column('lit', sa.String(length=50), nullable=True),
+    sa.Column('image_id', sa.Integer(), nullable=True),
+    sa.Column('audio_id', sa.Integer(), nullable=True),
+    sa.Column('video_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['audio_id'], ['media.id'], ),
+    sa.ForeignKeyConstraint(['image_id'], ['media.id'], ),
+    sa.ForeignKeyConstraint(['video_id'], ['media.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_words_char'), 'words', ['char'], unique=False)
+    op.create_index(op.f('ix_words_lang'), 'words', ['lang'], unique=False)
+    op.create_index(op.f('ix_words_lit'), 'words', ['lit'], unique=False)
+    op.create_index(op.f('ix_words_pinyin'), 'words', ['pinyin'], unique=False)
     op.create_table('langs',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=50), nullable=False),
@@ -86,17 +124,6 @@ def upgrade():
     )
     op.create_index(op.f('ix_lessons_creator_admin_id'), 'lessons', ['creator_admin_id'], unique=False)
     op.create_index(op.f('ix_lessons_topic_id'), 'lessons', ['topic_id'], unique=False)
-    op.create_table('media',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.String(length=50), nullable=False),
-    sa.Column('type', sa.Enum('mp4', 'mp3', 'png', 'jpg', 'gif', 'pdf', 'svg'), nullable=True),
-    sa.Column('file_path', sa.String(length=2083), nullable=True),
-    sa.Column('topic_image_fk', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['topic_image_fk'], ['topics.id'], onupdate='CASCADE', ondelete='CASCADE'),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_index(op.f('ix_media_name'), 'media', ['name'], unique=False)
-    op.create_index(op.f('ix_media_topic_image_fk'), 'media', ['topic_image_fk'], unique=False)
     op.create_table('tasks',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=True),
@@ -116,41 +143,15 @@ def upgrade():
     op.create_index(op.f('ix_tasks_creator_admin_id'), 'tasks', ['creator_admin_id'], unique=False)
     op.create_index(op.f('ix_tasks_lesson_id'), 'tasks', ['lesson_id'], unique=False)
     op.create_index(op.f('ix_tasks_task_type_id'), 'tasks', ['task_type_id'], unique=False)
-    op.create_table('words',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('char', sa.String(length=50), nullable=True),
-    sa.Column('pinyin', sa.String(length=50), nullable=True),
-    sa.Column('lang', sa.String(length=50), nullable=True),
-    sa.Column('lit', sa.String(length=50), nullable=True),
-    sa.Column('image_id', sa.Integer(), nullable=True),
-    sa.Column('audio_id', sa.Integer(), nullable=True),
-    sa.Column('video_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['audio_id'], ['media.id'], ),
-    sa.ForeignKeyConstraint(['image_id'], ['media.id'], ),
-    sa.ForeignKeyConstraint(['video_id'], ['media.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_index(op.f('ix_words_char'), 'words', ['char'], unique=False)
-    op.create_index(op.f('ix_words_lang'), 'words', ['lang'], unique=False)
-    op.create_index(op.f('ix_words_lit'), 'words', ['lit'], unique=False)
-    op.create_index(op.f('ix_words_pinyin'), 'words', ['pinyin'], unique=False)
     # ### end Alembic commands ###
 
 
 def downgrade():
     # ### commands auto generated by Alembic - please adjust! ###
-    op.drop_index(op.f('ix_words_pinyin'), table_name='words')
-    op.drop_index(op.f('ix_words_lit'), table_name='words')
-    op.drop_index(op.f('ix_words_lang'), table_name='words')
-    op.drop_index(op.f('ix_words_char'), table_name='words')
-    op.drop_table('words')
     op.drop_index(op.f('ix_tasks_task_type_id'), table_name='tasks')
     op.drop_index(op.f('ix_tasks_lesson_id'), table_name='tasks')
     op.drop_index(op.f('ix_tasks_creator_admin_id'), table_name='tasks')
     op.drop_table('tasks')
-    op.drop_index(op.f('ix_media_topic_image_fk'), table_name='media')
-    op.drop_index(op.f('ix_media_name'), table_name='media')
-    op.drop_table('media')
     op.drop_index(op.f('ix_lessons_topic_id'), table_name='lessons')
     op.drop_index(op.f('ix_lessons_creator_admin_id'), table_name='lessons')
     op.drop_table('lessons')
@@ -165,6 +166,17 @@ def downgrade():
     op.drop_index(op.f('ix_langs_name'), table_name='langs')
     op.drop_index(op.f('ix_langs_creator_admin_id'), table_name='langs')
     op.drop_table('langs')
+    op.drop_index(op.f('ix_words_pinyin'), table_name='words')
+    op.drop_index(op.f('ix_words_lit'), table_name='words')
+    op.drop_index(op.f('ix_words_lang'), table_name='words')
+    op.drop_index(op.f('ix_words_char'), table_name='words')
+    op.drop_table('words')
     op.drop_table('task_types')
+    op.drop_index(op.f('ix_media_word_video_fk'), table_name='media')
+    op.drop_index(op.f('ix_media_word_image_fk'), table_name='media')
+    op.drop_index(op.f('ix_media_word_audio_fk'), table_name='media')
+    op.drop_index(op.f('ix_media_topic_image_fk'), table_name='media')
+    op.drop_index(op.f('ix_media_name'), table_name='media')
+    op.drop_table('media')
     op.drop_table('admins')
     # ### end Alembic commands ###

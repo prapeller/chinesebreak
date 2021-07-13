@@ -30,7 +30,7 @@ def login():
     form = AdminLoginForm()
 
     if form.validate_on_submit():
-        cur_admin = Admin.query.filter_by(email=form.email.data).first()
+        cur_admin = Admin.query.filter_by(email=form.email.data.lower()).first()
         if cur_admin and cur_admin.check_password(form.password.data):
             login_user(cur_admin)
             flash('login success')

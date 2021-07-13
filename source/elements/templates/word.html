@@ -2,6 +2,37 @@
 
 {% block content %}
 
+		<h1 class="display-5 fw-bold">Word</h1>
 	{{ word }}
 
+	<div class="image_box shadow_light">
+		<div class="image_bottom">
+				<div class="ib_pinyin">{{ word.pinyin }}</div>
+				<div class="ib_char">{{ word.char }}</div>
+		</div>
+		<img class="image" src="{{ url_for(endpoint='static', filename='image/' + image_name) }}" alt="ooops">
+	</div>
+	<form method="POST" enctype="multipart/form-data">
+		{{ word_image_form.hidden_tag() }}
+		{{ word_image_form.image(class="form-control") }}
+		{{ word_image_form.upload }}
+	</form>
+
+	<audio controls class="mb_10 ml_mr_auto br_20 shadow_light">
+		<source src="{{ url_for('static', filename='audio/' + audio_name) }}">
+	</audio>
+
+	<form method="POST" enctype="multipart/form-data">
+		{{ word_audio_form.hidden_tag() }}
+		{{ word_audio_form.audio(class="form-control") }}
+		{{ word_audio_form.upload }}
+	</form>
+
+
+	<form method="POST">
+		{{ button_delete.hidden_tag() }}
+		<div class="d-grid">
+			{{ button_delete.delete(class="btn btn_del") }}
+		</div>
+	</form>
 {% endblock %}

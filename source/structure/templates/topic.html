@@ -5,34 +5,34 @@
 
 {% block content %}
 
-	<h1>Topic:</h1>
+	<h1 class="display-5 fw-bold">Topic</h1>
 	<p>{{ topic }}</p>
 
-	<div align="center">
-		<img src="{{ url_for(endpoint='static', filename='image/' + image_name) }}" class="rounded"
+	<div class="image_box">
+		<img class="image" src="{{ url_for(endpoint='static', filename='image/' + image_name) }}"
 		     alt="ooops">
 	</div>
 
-	<form method="POST">
-		{{ name_form.hidden_tag() }}
-		{{ name_form.name.label(class="form-label") }} {{ name_form.name(class="form-control") }}
-		{{ name_form.update }}
+	<form method="POST" enctype="multipart/form-data">
+		{{ topic_image_form.hidden_tag() }}
+		{{ topic_image_form.image(class="form-control") }}
+		{{ topic_image_form.upload }}
 	</form>
 
-	<form method="POST" enctype="multipart/form-data">
-		{{ topic_pic_form.hidden_tag() }}
-		{{ topic_pic_form.image.label(class="form-label") }} {{ topic_pic_form.image(class="form-control") }}
-		{{ topic_pic_form.update }}
+	<form method="POST">
+		{{ name_form.hidden_tag() }}
+		{{ name_form.name(class="form-control") }}
+		{{ name_form.update }}
 	</form>
 
 	<form method="POST">
 		{{ button_delete.hidden_tag() }}
-		<div class="d-grid gap-2">
-			{{ button_delete.delete(class="btn btn-danger") }}
+		<div class="d-grid">
+			{{ button_delete.delete(class="btn btn_del") }}
 		</div>
 	</form>
 
-	<h3>Lessons:</h3>
+	<p class="display-6"> Lessons:</p>
 	<div class="list-group">
 		{% for lesson in lessons %}
 			<a href="{{ url_for('structure.lesson', lesson_id=lesson.id) }}"
@@ -43,8 +43,8 @@
 
 	<form method="POST">
 		{{ button_add.hidden_tag() }}
-		<div class="d-grid gap-2">
-			{{ button_add.add(class="btn btn-primary") }}
+		<div class="d-grid">
+			{{ button_add.add(class="btn btn_add") }}
 		</div>
 	</form>
 

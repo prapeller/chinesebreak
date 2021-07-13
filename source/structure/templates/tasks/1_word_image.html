@@ -2,20 +2,20 @@
 
 {% block content %}
 
-	<h1>Task:</h1>
-	<h2>{{ task_type_name }}</h2>
+	<h1 class="display-5 fw-bold">Task</h1>
+	<p class="display-6">{{ task_type_name }}</p>
 	<p>{{ task }}</p>
 
 	<form method="POST">
 		{{ button_delete.hidden_tag() }}
-		<div class="d-grid gap-2">
-			{{ button_delete.delete(class="btn btn-danger") }}
+		<div class="d-grid">
+			{{ button_delete.delete(class="btn btn_del") }}
 		</div>
 	</form>
 	<br>
 
 
-	<h3>Elements:</h3>
+	<p class="display-6"> Elements:</p>
 	{% for element in elements %}
 
 		<ul>

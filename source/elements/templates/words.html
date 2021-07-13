@@ -5,9 +5,7 @@
 
 {% block content %}
 
-	<h1>Words:</h1>
-
-
+	<h1 class="display-5 fw-bold">Words</h1>
 
 	{% for word in words %}
 		<div class="list-group">
@@ -19,8 +17,8 @@
 
 	<form method="POST">
 		{{ button_add.hidden_tag() }}
-		<div class="d-grid gap-2">
-			{{ button_add.add(class="btn btn-primary") }}
+		<div class="d-grid">
+			{{ button_add.add(class="btn btn_add") }}
 		</div>
 	</form>
 

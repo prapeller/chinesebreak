@@ -5,11 +5,11 @@ from source.admin_panel_models import TaskType
 
 
 class ButtonAddForm(FlaskForm):
-    add = SubmitField('ADD')
+    add = SubmitField(' ')
 
 
 class ButtonDeleteForm(FlaskForm):
-    delete = SubmitField('DELETE')
+    delete = SubmitField(' ')
 
 
 class NameForm(FlaskForm):
@@ -19,3 +19,20 @@ class NameForm(FlaskForm):
 
 class SearchForm(Form):
     search = StringField('search')
+
+
+class WordForm(Form):
+    pinyin = StringField('pinyin')
+    character = StringField('character')
+    lang = StringField('lang')
+    lit = StringField('lit')
+
+
+class UploadImageForm(FlaskForm):
+    image = FileField('image', validators=[FileAllowed(['png', 'jpg', 'svg'])])
+    upload = SubmitField('upload')
+
+
+class UploadAudioForm(FlaskForm):
+    audio = FileField('audio', validators=[FileAllowed(['mp3', 'mp4'])])
+    upload = SubmitField('upload')

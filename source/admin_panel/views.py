@@ -8,9 +8,3 @@ admin_panel_blueprint = Blueprint('admin_panel', __name__, template_folder='temp
 def main():
     return render_template('main.html')
 
-
-@admin_panel_blueprint.route('/info')
-def info():
-    return render_template('info.html')
-
-

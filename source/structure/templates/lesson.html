@@ -5,17 +5,17 @@
 
 {% block content %}
 
-	<h1>Lesson:</h1>
+	<h1 class="display-5 fw-bold">Lesson</h1>
 	<p>{{ lesson }}</p>
 
 	<form method="POST">
 		{{ button_delete.hidden_tag() }}
-		<div class="d-grid gap-2">
-			{{ button_delete.delete(class="btn btn-danger") }}
+		<div class="d-grid">
+			{{ button_delete.delete(class="btn btn_del") }}
 		</div>
 	</form>
 
-	<h3>Tasks:</h3>
+	<p class="display-6"> Tasks:</p>
 	<div id="sortableList" class="list-group">
 {#	<div id="listWithHandle" class="list-group">#}
 		{% for task in tasks %}
@@ -41,8 +41,8 @@
 		<form method="POST">
 			{{ select_type_form.hidden_tag() }}
 			{{ select_type_form.type(class="form-select") }}
-			<div class="d-grid gap-2">
-				{{ select_type_form.add(class="btn btn-primary") }}
+			<div class="d-grid">
+				{{ select_type_form.add(class="btn btn_add") }}
 			</div>
 		</form>
 	</div>

@@ -110,7 +110,7 @@ class Topic(db.Model):
     course_id = db.Column(db.ForeignKey('courses.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
 
     lessons = db.relationship('Lesson', backref='topic', cascade='all, delete')
-    pictures = db.relationship('Media', backref='topic', cascade='all, delete')
+    images = db.relationship('Media', backref='topic', cascade='all, delete')
 
     def __init__(self, name, creator_admin_id, course_id):
         self.name = name
@@ -223,9 +223,10 @@ class Word(db.Model):
     image_id = db.Column(db.ForeignKey('media.id'))
     audio_id = db.Column(db.ForeignKey('media.id'))
     video_id = db.Column(db.ForeignKey('media.id'))
-    images = db.relationship('Media', foreign_keys=[image_id])
-    audios = db.relationship('Media', foreign_keys=[audio_id])
-    videos = db.relationship('Media', foreign_keys=[video_id])
+    images = db.relationship('Media', foreign_keys=[image_id], cascade='all, delete')
+    audios = db.relationship('Media', foreign_keys=[audio_id], cascade='all, delete')
+    videos = db.relationship('Media', foreign_keys=[video_id], cascade='all, delete')
+
 
     def __repr__(self):
         return f'id: {self.id}, char: {self.char}, pinyin: {self.pinyin}, lang: {self.lang}, lit: {self.lit}'
@@ -240,10 +241,9 @@ class Media(db.Model):
     file_path = db.Column(db.String(2083))
 
     topic_image_fk = db.Column(db.ForeignKey('topics.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
-    # word_image_fk = db.Column(db.ForeignKey('words.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
-    # word_audio_fk = db.Column(db.ForeignKey('words.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
-    # word_video_fk = db.Column(db.ForeignKey('words.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
-
+    word_image_fk = db.Column(db.ForeignKey('words.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
+    word_audio_fk = db.Column(db.ForeignKey('words.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
+    word_video_fk = db.Column(db.ForeignKey('words.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
 
 # class Character(db.Model):
 #     __tablename__ = 'character'

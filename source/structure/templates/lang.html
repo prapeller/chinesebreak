@@ -5,7 +5,7 @@
 
 {% block content %}
 
-	<h1>Language:</h1>
+	<h1 class="display-5 fw-bold">Language</h1>
 	<p>{{ lang }}</p>
 
 	<form method="POST">
@@ -16,12 +16,12 @@
 
 	<form method="POST">
 		{{ button_delete.hidden_tag() }}
-		<div class="d-grid gap-2">
-			{{ button_delete.delete(class="btn btn-danger") }}
+		<div class="d-grid">
+			{{ button_delete.delete(class="btn_del") }}
 		</div>
 	</form>
 
-	<h3>Courses:</h3>
+	<p class="display-6"> Courses:</p>
 	<div class="list-group">
 		{% for course in courses %}
 			<a href="{{ url_for('structure.course', course_id=course.id) }}"
@@ -32,8 +32,8 @@
 
 	<form method="POST">
 		{{ button_add.hidden_tag() }}
-		<div class="d-grid gap-2">
-			{{ button_add.add(class="btn btn-primary") }}
+		<div class="d-grid">
+			{{ button_add.add(class="btn btn_add") }}
 		</div>
 	</form>
 

@@ -2,8 +2,8 @@ from flask import render_template, redirect, url_for, Blueprint, session, flash,
 from source.admin_panel_models import Lang, Course, Topic, Lesson, Task, TaskType, Media
 from flask_login import login_required, current_user
 from source import db
-from source.structure.forms import ButtonAddForm, ButtonDeleteForm, NameForm, TopicImageForm
-from source.structure.image_handler import add_topic_image
+from source.structure.forms import ButtonAddForm, ButtonDeleteForm, NameForm, UploadImageForm
+from source.static.media_handler import add_media
 from source.structure.forms import SelectTaskTypeForm
 
 structure_blueprint = Blueprint('structure', __name__, template_folder='templates')
@@ -104,7 +104,7 @@ def topic(topic_id):
 
     name_form = NameForm()
     button_add = ButtonAddForm()
-    topic_image_form = TopicImageForm()
+    topic_image_form = UploadImageForm()
     button_delete = ButtonDeleteForm()
 
     if name_form.validate_on_submit() and name_form.name.data:
@@ -115,7 +115,7 @@ def topic(topic_id):
         name_form.name.data = topic.name
 
     if topic_image_form.validate_on_submit() and topic_image_form.image.data:
-        image_media = add_topic_image(topic, topic_image_form.image.data)
+        image_media = add_media(item=topic, file=topic_image_form.image.data)
         topic.image_id = image_media.id
         db.session.commit()
         return redirect(url_for('structure.topic', topic_id=topic.id))
@@ -136,7 +136,7 @@ def topic(topic_id):
                            image_name=image_name,
                            lessons=topic.lessons,
                            name_form=name_form,
-                           topic_pic_form=topic_image_form,
+                           topic_image_form=topic_image_form,
                            button_delete=button_delete,
                            button_add=button_add, )
 
