@@ -24,15 +24,15 @@
 					   class="list-group-item list-group-item-action list-group-item-warning">{{ task }}</a>
 				{% endif %}
 
-				{% if task.task_type_id in [6, 7, 8, 9, 10, 11, 12, 13, 14] %}
-					<a href="{{ url_for('structure.task', task_id=task.id) }}"
-					   class="list-group-item list-group-item-action list-group-item-danger">{{ task }}</a>
-				{% endif %}
-
-				{% if task.task_type_id in [15, 16, 17, 18] %}
-					<a href="{{ url_for('structure.task', task_id=task.id) }}"
-					   class="list-group-item list-group-item-action list-group-item-primary">{{ task }}</a>
-				{% endif %}
+{#				{% if task.task_type_id in [6, 7, 8, 9, 10, 11, 12, 13, 14] %}#}
+{#					<a href="{{ url_for('structure.task', task=task) }}"#}
+{#					   class="list-group-item list-group-item-action list-group-item-danger">{{ task }}</a>#}
+{#				{% endif %}#}
+{##}
+{#				{% if task.task_type_id in [15, 16, 17, 18] %}#}
+{#					<a href="{{ url_for('structure.task', task=task) }}"#}
+{#					   class="list-group-item list-group-item-action list-group-item-primary">{{ task }}</a>#}
+{#				{% endif %}#}
 		{% endfor %}
 	</div>
 	<br>

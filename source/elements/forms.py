@@ -21,11 +21,12 @@ class SearchForm(Form):
     search = StringField('search')
 
 
-class WordForm(Form):
+class WordForm(FlaskForm):
     pinyin = StringField('pinyin')
-    character = StringField('character')
+    char = StringField('char')
     lang = StringField('lang')
     lit = StringField('lit')
+    update = SubmitField('update')
 
 
 class UploadImageForm(FlaskForm):

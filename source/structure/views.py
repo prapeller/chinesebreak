@@ -1,5 +1,5 @@
 from flask import render_template, redirect, url_for, Blueprint, session, flash, request
-from source.admin_panel_models import Lang, Course, Topic, Lesson, Task, TaskType, Media
+from source.admin_panel_models import Lang, Course, Topic, Lesson, Task, TaskType, Media, Word
 from flask_login import login_required, current_user
 from source import db
 from source.structure.forms import ButtonAddForm, ButtonDeleteForm, NameForm, UploadImageForm
@@ -24,7 +24,7 @@ def structure():
                            button_add=button_add)
 
 
-@structure_blueprint.route('/lang_id_<int:lang_id>', methods=["GET", "POST"])
+@structure_blueprint.route('/lang_<int:lang_id>', methods=["GET", "POST"])
 def lang(lang_id):
     lang = Lang.query.filter_by(id=lang_id).first()
 
@@ -59,7 +59,7 @@ def lang(lang_id):
                            button_add=button_add, )
 
 
-@structure_blueprint.route('/course_id_<int:course_id>', methods=["GET", "POST"])
+@structure_blueprint.route('/<int:course_id>', methods=["GET", "POST"])
 def course(course_id):
     course = Course.query.filter_by(id=course_id).first()
 
@@ -170,86 +170,31 @@ def lesson(lesson_id):
                            )
 
 
-@structure_blueprint.route('/task_id_<int:task_id>', methods=["GET", "POST"])
+@structure_blueprint.route('/render_task<int:task_id>', methods=["GET", "POST"])
 def task(task_id):
     task = Task.query.filter_by(id=task_id).first()
-    task_type = TaskType.query.filter_by(id=task.task_type_id).first()
-    task_type_id = task_type.id
-    task_type_name = task_type.name
+    if task.task_type_id == 1:
+        return redirect(url_for('structure.task_type_1', task_id=task_id))
+
+
+@structure_blueprint.route('/1_word_image_id_<int:task_id>', methods=["GET", "POST"])
+def task_type_1(task_id):
+    task = Task.query.filter_by(id=task_id).first()
+    words_id_set = task.elements.get('words_id')
+    act_words_id_set = task.elements.get('words_id_active_or_to_del')
+
+    words = Word.query.filter(Word.id.in_(words_id_set)).all()
+    active_words = Word.query.filter(Word.id.in_(act_words_id_set)).all()
 
     button_delete = ButtonDeleteForm()
-
     if button_delete.validate_on_submit() and button_delete.delete.data:
         db.session.delete(task)
         db.session.commit()
         return redirect(url_for('structure.lesson', lesson_id=task.lesson_id))
 
-    if task_type_id == 1:
-        return render_template('tasks/1_word_image.html',
-                               task=task,
-                               task_type_name=task_type_name,
-                               button_delete=button_delete,
-                               )
-
-    elif task_type_id == 2:
-        return render_template('tasks/2_word_char_from_lang.html',
-                               task=task,
-                               task_type_name=task_type_name,
-                               button_delete=button_delete,
-                               )
-
-    elif task_type_id == 3:
-        return render_template('tasks/3_word_lang_from_char.html',
-                               task=task,
-                               task_type_name=task_type_name,
-                               button_delete=button_delete,
-                               )
-
-    elif task_type_id == 4:
-        return render_template('tasks/4_word_char_from_video.html',
-                               task=task,
-                               task_type_name=task_type_name,
-                               button_delete=button_delete,
-                               )
-
-    elif task_type_id == 5:
-        return render_template('tasks/5_word_match.html',
-                               task=task,
-                               task_type_name=task_type_name,
-                               button_delete=button_delete,
-                               )
-
-    elif task_type_id == 6:
-        return render_template('tasks/6_sent_image.html',
-                               task=task,
-                               task_type_name=task_type_name,
-                               button_delete=button_delete,
-                               )
-
-    elif task_type_id == 7:
-        return render_template('tasks/7_sent_char_from_lang.html',
-                               task=task,
-                               task_type_name=task_type_name,
-                               button_delete=button_delete,
-                               )
-
-    elif task_type_id == 8:
-        return render_template('tasks/8_sent_lang_from_char.html',
-                               task=task,
-                               task_type_name=task_type_name,
-                               button_delete=button_delete,
-                               )
-
-    elif task_type_id == 9:
-        return render_template('tasks/9_sent_lang_from_video.html',
-                               task=task,
-                               task_type_name=task_type_name,
-                               button_delete=button_delete,
-                               )
-
-    elif task_type_id == 10:
-        return render_template('tasks/10_sent_say_from_char.html',
-                               task=task,
-                               task_type_name=task_type_name,
-                               button_delete=button_delete,
-                               )
+    return render_template('tasks/1_word_image.html',
+                           task=task,
+                           button_delete=button_delete,
+                           words=words,
+                           active_words=active_words,
+                           )

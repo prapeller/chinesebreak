@@ -1,6 +1,6 @@
 from flask import Flask, render_template, url_for, redirect, Blueprint, request, flash
 from source import db
-from source.elements.forms import ButtonAddForm, ButtonDeleteForm, UploadImageForm, UploadAudioForm
+from source.elements.forms import ButtonAddForm, ButtonDeleteForm, UploadImageForm, UploadAudioForm, WordForm
 from source.admin_panel_models import Word, Media
 from source.static.media_handler import add_media
 
@@ -19,7 +19,7 @@ def words():
     button_add = ButtonAddForm()
 
     if button_add.validate_on_submit() and button_add.add.data:
-        new_word = Word(char='new', pinyin='new', lang='')
+        new_word = Word(char='新', pinyin='xīn', lang='новый')
         db.session.add(new_word)
         db.session.commit()
         return redirect(url_for('elements.word', word_id=new_word.id))
@@ -45,6 +45,22 @@ def word(word_id):
         flash('delete success')
         return redirect(url_for('elements.words'))
 
+    word_form = WordForm()
+    if word_form.validate_on_submit() and word_form.update.data:
+        word.pinyin = word_form.pinyin.data
+        word.char = word_form.char.data
+        word.lang = word_form.lang.data
+        word.lit = word_form.lit.data
+        db.session.commit()
+        flash('update success')
+
+    elif request.method == "GET":
+        word_form.pinyin.data = word.pinyin
+        word_form.char.data = word.char
+        word_form.lang.data = word.lang
+        word_form.lit.data = word.lit
+
+
     word_image_form = UploadImageForm()
     if word_image_form.validate_on_submit() and word_image_form.image.data:
         image_media = add_media(item=word, file=word_image_form.image.data)
@@ -66,4 +82,5 @@ def word(word_id):
                            word_image_form=word_image_form,
                            word_audio_form=word_audio_form,
                            button_delete=button_delete,
+                           word_form=word_form,
                            )

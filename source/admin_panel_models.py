@@ -64,10 +64,7 @@ class Lang(db.Model):
         self.creator_admin_id = creator_admin_id
 
     def __repr__(self):
-        return f'id: {self.id}, \n' \
-               f'name: {self.name}, \n' \
-               f'is_published: {self.is_published}, \n' \
-               f'creator name: {Admin.query.filter_by(id=self.creator_admin_id).first().name}, \n'
+        return f'{self.name}_id_{self.id}'
 
 
 class Course(db.Model):
@@ -90,11 +87,8 @@ class Course(db.Model):
         self.lang_id = lang_id
 
     def __repr__(self):
-        return f'id: {self.id}, ' \
-               f'name: {self.name}, \n' \
-               f'is_published: {self.is_published}, \n' \
-               f'creator name: {Admin.query.filter_by(id=self.creator_admin_id).first().name}, \n' \
-               f'lang name: {Lang.query.filter_by(id=self.lang_id).first().name}, \n'
+        lang_name = Lang.query.filter_by(id=self.lang_id).first().name
+        return f'{self.name}_id_{self.id}'
 
 
 class Topic(db.Model):
@@ -118,10 +112,8 @@ class Topic(db.Model):
         self.course_id = course_id
 
     def __repr__(self):
-        return f'id: {self.id}, ' \
-               f'name: {self.name}, \n' \
-               f'creator name: {Admin.query.filter_by(id=self.creator_admin_id).first().name}, \n' \
-               f'course name: {Course.query.filter_by(id=self.course_id).first().name}, \n'
+        course_name = Course.query.filter_by(id=self.course_id).first().name
+        return f'{self.name}_id_{self.id}'
 
 
 class Lesson(db.Model):
@@ -141,9 +133,10 @@ class Lesson(db.Model):
         self.topic_id = topic_id
 
     def __repr__(self):
-        return f'id: {self.id}, \n' \
-               f'creator: {self.creator_admin_id}, \n' \
-               f'topic_id: {self.topic_id}, \n'
+        topic = Topic.query.filter_by(id=self.topic_id).first()
+        course_id = Topic.query.filter_by(id=self.topic_id).first().course_id
+        course = Course.query.filter_by(id=course_id).first()
+        return f'id_{self.id}_topic_{topic.name}_course_{course.name}'
 
 
 class Task(db.Model):
@@ -206,9 +199,8 @@ class Task(db.Model):
         self.lesson_id = lesson_id
 
     def __repr__(self):
-        return f'id: {self.id}, type: {TaskType.query.filter_by(id=self.task_type_id).first().name}, \n' \
-               f'creator: {self.creator_admin_id}, \n' \
-               f'lesson: {self.lesson_id}, \n'
+        task_type_name = TaskType.query.filter_by(id=self.task_type_id).first().name
+        return f'id_{self.id}_type_{task_type_name}_lesson_id_{self.lesson_id}'
 
 
 class Word(db.Model):
@@ -226,7 +218,6 @@ class Word(db.Model):
     images = db.relationship('Media', foreign_keys=[image_id], cascade='all, delete')
     audios = db.relationship('Media', foreign_keys=[audio_id], cascade='all, delete')
     videos = db.relationship('Media', foreign_keys=[video_id], cascade='all, delete')
-
 
     def __repr__(self):
         return f'id: {self.id}, char: {self.char}, pinyin: {self.pinyin}, lang: {self.lang}, lit: {self.lit}'

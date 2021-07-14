@@ -3,7 +3,6 @@
 {% block content %}
 
 	<h1 class="display-5 fw-bold">Task</h1>
-	<p class="display-6">{{ task_type_name }}</p>
 	<p>{{ task }}</p>
 
 	<form method="POST">
@@ -12,53 +11,14 @@
 			{{ button_delete.delete(class="btn btn_del") }}
 		</div>
 	</form>
-	<br>
 
-
-	<p class="display-6"> Elements:</p>
-	{% for element in elements %}
-
-		<ul>
-			<li>
-				{{ element }}
-			</li>
-		</ul>
-
-	{% endfor %}
-	<br>
-
-	<h3>Right sentences:</h3>
-	{% for sent in right_sentences %}
-
-		<ul>
-			<li>
-				{{ sent }}
-			</li>
-		</ul>
-
-	{% endfor %}
-	<br>
-
-	<h3>Wrong sentences:</h3>
-	{% for sent in wrong_sentences %}
-
-		<ul>
-			<li>
-				{{ sent }}
-			</li>
-		</ul>
-
-	{% endfor %}
-	<br>
-
-	<h3>Media:</h3>
-	{% for file in media %}
-
-		<ul>
-			<li>
-				{{ file }}
-			</li>
-		</ul>
+	<p class="display-6">Words:</p>
+	{% for word in words %}
+		{% if word in active_words %}
+			<div class="word-box-active">{{ word }} <h4>(active)</h4></div>
+		{% else %}
+			<div class="word-box">{{ word }}</div>
+		{% endif %}
 
 	{% endfor %}
 	<br>
