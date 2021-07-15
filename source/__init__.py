@@ -27,7 +27,7 @@ from source.admins.views import admins_blueprint
 from source.structure.views import structure_blueprint
 from source.elements.views import elements_blueprint
 
-app.register_blueprint(admin_panel_blueprint, url_prefix='/admin_panel')
-app.register_blueprint(admins_blueprint, url_prefix='/admins')
-app.register_blueprint(structure_blueprint, url_prefix='/structure')
-app.register_blueprint(elements_blueprint, url_prefix='/elements')
+app.register_blueprint(admin_panel_blueprint)
+app.register_blueprint(admins_blueprint)
+app.register_blueprint(structure_blueprint)
+app.register_blueprint(elements_blueprint)

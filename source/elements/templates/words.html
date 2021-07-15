@@ -7,6 +7,11 @@
 
 	<h1 class="display-5 fw-bold">Words</h1>
 
+	<form class="d-flex nav-item my-lg-0" method="GET">
+		<input class="form-control me-2" type="search" placeholder="Search" name="search_key">
+		<button class="btn btn-outline-success" type="submit">Search</button>
+	</form>
+
 	{% for word in words %}
 		<div class="list-group">
 			<a href="{{ url_for('elements.word', word_id=word.id) }}"

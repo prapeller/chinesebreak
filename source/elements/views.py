@@ -4,7 +4,7 @@ from source.elements.forms import ButtonAddForm, ButtonDeleteForm, UploadImageFo
 from source.admin_panel_models import Word, Media
 from source.static.media_handler import add_media
 
-elements_blueprint = Blueprint('elements', __name__, template_folder='templates')
+elements_blueprint = Blueprint('elements', __name__, url_prefix='/elements', template_folder='templates')
 
 
 @elements_blueprint.route('/words', methods=['GET', 'POST'])
@@ -59,7 +59,6 @@ def word(word_id):
         word_form.char.data = word.char
         word_form.lang.data = word.lang
         word_form.lit.data = word.lit
-
 
     word_image_form = UploadImageForm()
     if word_image_form.validate_on_submit() and word_image_form.image.data:

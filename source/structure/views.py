@@ -6,7 +6,7 @@ from source.structure.forms import ButtonAddForm, ButtonDeleteForm, NameForm, Up
 from source.static.media_handler import add_media
 from source.structure.forms import SelectTaskTypeForm
 
-structure_blueprint = Blueprint('structure', __name__, template_folder='templates')
+structure_blueprint = Blueprint('structure', __name__, url_prefix='/structure', template_folder='templates')
 
 
 @structure_blueprint.route('/', methods=["GET", "POST"])
@@ -24,7 +24,7 @@ def structure():
                            button_add=button_add)
 
 
-@structure_blueprint.route('/lang_<int:lang_id>', methods=["GET", "POST"])
+@structure_blueprint.route('lang_<int:lang_id>/', methods=["GET", "POST"])
 def lang(lang_id):
     lang = Lang.query.filter_by(id=lang_id).first()
 
@@ -59,7 +59,7 @@ def lang(lang_id):
                            button_add=button_add, )
 
 
-@structure_blueprint.route('/<int:course_id>', methods=["GET", "POST"])
+@structure_blueprint.route('course_<int:course_id>/', methods=["GET", "POST"])
 def course(course_id):
     course = Course.query.filter_by(id=course_id).first()
 
@@ -96,7 +96,7 @@ def course(course_id):
                            button_add=button_add, )
 
 
-@structure_blueprint.route('/topic_id_<int:topic_id>', methods=["GET", "POST"])
+@structure_blueprint.route('topic_<int:topic_id>/', methods=["GET", "POST"])
 def topic(topic_id):
     topic = Topic.query.filter_by(id=topic_id).first()
     image = Media.query.filter_by(id=topic.image_id).first()
@@ -141,7 +141,7 @@ def topic(topic_id):
                            button_add=button_add, )
 
 
-@structure_blueprint.route('/lesson_id_<int:lesson_id>', methods=["GET", "POST"])
+@structure_blueprint.route('lesson_<int:lesson_id>/', methods=["GET", "POST"])
 def lesson(lesson_id):
     lesson = Lesson.query.filter_by(id=lesson_id).first()
 
@@ -170,21 +170,78 @@ def lesson(lesson_id):
                            )
 
 
-@structure_blueprint.route('/render_task<int:task_id>', methods=["GET", "POST"])
+@structure_blueprint.route('render_task<int:task_id>/', methods=["GET", "POST"])
 def task(task_id):
     task = Task.query.filter_by(id=task_id).first()
     if task.task_type_id == 1:
-        return redirect(url_for('structure.task_type_1', task_id=task_id))
+        return redirect(url_for('structure.task_1_word_image', task_id=task_id))
 
 
-@structure_blueprint.route('/1_word_image_id_<int:task_id>', methods=["GET", "POST"])
-def task_type_1(task_id):
+@structure_blueprint.route('add_to_task_<int:task_id>_word_<int:word_id>/', methods=["GET", "POST"])
+def add_to_task_word(task_id, word_id):
     task = Task.query.filter_by(id=task_id).first()
-    words_id_set = task.elements.get('words_id')
-    act_words_id_set = task.elements.get('words_id_active_or_to_del')
+    words = task.elements['words_id']
+    words.append(word_id)
+    task.elements['words_id'] = words
+    db.session.commit()
+    return redirect(url_for('structure.task', task_id=task_id))
 
-    words = Word.query.filter(Word.id.in_(words_id_set)).all()
-    active_words = Word.query.filter(Word.id.in_(act_words_id_set)).all()
+
+@structure_blueprint.route('add_to_task_<int:task_id>_active_element_<string:element_type>_id_<int:element_id>/',
+                           methods=["GET", "POST"])
+def add_to_task_act_elem(task_id, element_type, element_id):
+    if element_type == 'word':
+        task = Task.query.filter_by(id=task_id).first()
+        active_words = task.elements['words_id_active_or_to_del']
+        active_words.append(element_id)
+        task.elements['words_id_active_or_to_del'] = active_words
+        db.session.commit()
+
+    return redirect(url_for('structure.task', task_id=task_id))
+
+
+@structure_blueprint.route('remove_from_task_<int:task_id>_active_element_<string:element_type>_id_<int:element_id>/',
+                           methods=["GET", "POST"])
+def remove_act_elem(task_id, element_type, element_id):
+    if element_type == 'word':
+        task = Task.query.filter_by(id=task_id).first()
+        active_words = task.elements['words_id_active_or_to_del']
+        active_words.remove(element_id)
+        task.elements['words_id_active_or_to_del'] = active_words
+        db.session.commit()
+
+    return redirect(url_for('structure.task', task_id=task_id))
+
+
+@structure_blueprint.route('task_1_word_image_<int:task_id>/', methods=["GET", "POST"])
+def task_1_word_image(task_id):
+    class RenderWord(Word):
+        def __init__(self, word):
+            self.id, self.pinyin, self.char, self.lang, self.lit = word.id, word.pinyin, word.char, word.lang, word.lit
+            if Media.query.filter_by(id=word.image_id).first():
+                self.image_name = Media.query.filter_by(id=word.image_id).first().name
+            if Media.query.filter_by(id=word.audio_id).first():
+                self.audio_name = Media.query.filter_by(id=word.audio_id).first().name
+            self.is_active = True if self.id in Task.query.filter_by(id=task_id).first().elements.get(
+                'words_id_active_or_to_del') else False
+
+    task = Task.query.filter_by(id=task_id).first()
+    task_words_id_set = task.elements.get('words_id')
+    task_words = [RenderWord(word) for word in Word.query.filter(Word.id.in_(task_words_id_set)).all()]
+
+    search_val = request.args.get('search_key')
+    if search_val:
+        words = Word.query.filter(
+            Word.char.contains(search_val) | Word.pinyin.contains(search_val) | Word.lang.contains(search_val))
+    else:
+        words = Word.query.all()
+
+    button_add = ButtonAddForm()
+    if button_add.validate_on_submit() and button_add.add.data:
+        new_word = Word(char='新', pinyin='xīn', lang='новый')
+        db.session.add(new_word)
+        db.session.commit()
+        return redirect(url_for('elements.word', word_id=new_word.id))
 
     button_delete = ButtonDeleteForm()
     if button_delete.validate_on_submit() and button_delete.delete.data:
@@ -195,6 +252,7 @@ def task_type_1(task_id):
     return render_template('tasks/1_word_image.html',
                            task=task,
                            button_delete=button_delete,
+                           task_words=task_words,
                            words=words,
-                           active_words=active_words,
+                           button_add=button_add,
                            )

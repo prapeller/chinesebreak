@@ -3,6 +3,7 @@ from source import db, login_manager
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
+from sqlalchemy.ext.mutable import MutableDict
 
 
 @login_manager.user_loader
@@ -145,7 +146,7 @@ class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     created_at = db.Column(db.DateTime, default=datetime.now())
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
-    elements = db.Column(db.JSON, default={
+    elements = db.Column(MutableDict.as_mutable(db.JSON), default={
         "words_id": [],
         "grammar_id": [],
         "character_id": [],
@@ -156,7 +157,7 @@ class Task(db.Model):
         # неправильные слова
         "words_id_wrong": []
     })
-    right_sentences = db.Column(db.JSON, default={
+    right_sentences = db.Column(MutableDict.as_mutable(db.JSON), default={
         # предлоежние на китайском
         "sent_char_A": [],
         # предложение на pinyin
@@ -172,13 +173,13 @@ class Task(db.Model):
         "sent_lit_B": []
     })
     # 'смысл как в right_sentences, только это списки с неправильными вариантами предложений
-    wrong_sentences = db.Column(db.JSON, default={
+    wrong_sentences = db.Column(MutableDict.as_mutable(db.JSON), default={
         "sent_char": [],
         "sent_pinyin": [],
         "sent_lang": []
     })
     # списки с media_id файлов'
-    media = db.Column(db.JSON, default={
+    media = db.Column(MutableDict.as_mutable(db.JSON), default={
         # - картинки вариантов ответа для заданий sent_image предложений'
         "sent_images_id": [],
         # картинка правильного варианта ответа

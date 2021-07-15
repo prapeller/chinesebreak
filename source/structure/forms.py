@@ -26,3 +26,7 @@ class SelectTaskTypeForm(FlaskForm):
     choices = [(_type.id, f'{_type.id}) {_type.name}') for _type in TaskType.query.all()]
     type = SelectField('select task type', choices=choices)
     add = SubmitField(' ')
+
+
+# class ButtonSelectForm(FlaskForm):
+#     select = SubmitField(' ')

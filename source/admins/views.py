@@ -5,7 +5,7 @@ from source.admin_panel_models import Admin
 from source.admins.forms import AdminRegisterForm, AdminLoginForm, AdminUpdateForm
 from werkzeug.security import generate_password_hash
 
-admins_blueprint = Blueprint('admins', __name__, template_folder='templates')
+admins_blueprint = Blueprint('admins', __name__, url_prefix='/admins', template_folder='templates')
 
 
 # register_managers

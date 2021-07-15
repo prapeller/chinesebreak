@@ -12,15 +12,81 @@
 		</div>
 	</form>
 
-	<p class="display-6">Words:</p>
-	{% for word in words %}
-		{% if word in active_words %}
-			<div class="word-box-active">{{ word }} <h4>(active)</h4></div>
-		{% else %}
-			<div class="word-box">{{ word }}</div>
-		{% endif %}
+	<p class="display-5">Task words:</p>
 
+	<div class="task-words">
+
+
+		{% for word in task_words %}
+			<div class="task-word">
+				{% if word.is_active %}
+
+					<div class="task-word-box active-word">
+						<div>
+							<div class="cb_pinyin">{{ word.pinyin }}</div>
+							<div class="cb_char">{{ word.char }}</div>
+						</div>
+					</div>
+
+				{% else %}
+					<div class="task-word-box inactive-word">
+						<div>
+							<div class="ib_pinyin">{{ word.pinyin }}</div>
+							<div class="ib_char">{{ word.char }}</div>
+						</div>
+					</div>
+				{% endif %}
+
+				<a class="add_to_task_act_elem"
+				   href="{{ url_for('structure.add_to_task_act_elem', task_id=task.id, element_type="word", element_id=word.id) }}">
+					add
+				</a>
+
+				<a class="remove_act_elem"
+				   href="{{ url_for('structure.remove_act_elem', task_id=task.id, element_type="word", element_id=word.id) }}">
+					rem
+				</a>
+			</div>
+		{% endfor %}
+	</div>
+
+	<p class="display-6">Active elements:</p>
+
+	{% for word in task_words %}
+		{% if word.is_active %}
+
+			<div class="task-word-box">
+				<div>
+					<div class="cb_pinyin">{{ word.pinyin }}</div>
+					<div class="cb_char">{{ word.char }}</div>
+				</div>
+			</div>
+		{% endif %}
 	{% endfor %}
-	<br>
+
+	<div class="search_words">
+		<p class="display-6">Search words</p>
+
+		<form class="d-flex nav-item my-lg-0" method="GET">
+			<input class="form-control me-2" type="search" placeholder="Search" name="search_key">
+			<button class="btn btn-outline-success" type="submit">Search</button>
+		</form>
+
+		{% for word in words %}
+			<div class="list-group">
+				<a href="{{ url_for('structure.add_to_task_word', task_id=task.id, word_id=word.id) }}"
+				   class="list-group-item list-group-item-action ">{{ word }}</a>
+			</div>
+		{% endfor %}
+		<br>
+
+		<form method="POST">
+			{{ button_add.hidden_tag() }}
+			<div class="d-grid">
+				{{ button_add.add(class="btn btn_add") }}
+			</div>
+		</form>
+	</div>
+
 
 {% endblock %}
