@@ -218,40 +218,6 @@ def add_to_task_word(task_id, word_id):
 # @structure_blueprint.route('task_1_word_image_<int:task_id>/', methods=["GET", "POST"])
 @flask_sijax.route(structure_blueprint, 'task_1_word_image_<int:task_id>/', methods=["GET", "POST"])
 def task_1_word_image(task_id):
-    # def hello_handler(obj_response, hello_from, hello_to):
-    #     obj_response.alert('Hello from %s to %s' % (hello_from, hello_to))
-    #     obj_response.css('a', 'color', 'green')
-    #
-    # def goodbye_handler(obj_response):
-    #     obj_response.alert('Goodbye, whoever you are.')
-    #     obj_response.css('a', 'color', 'red')
-    #
-    # def activate_word(obj_response, word_id):
-    def activate_word(word_id):
-        # obj_response.alert(f'activate {word_id}')
-        task = Task.query.filter_by(id=task_id).first()
-        active_words = task.elements['words_id_active_or_to_del']
-        active_words.append(word_id)
-        task.elements['words_id_active_or_to_del'] = active_words
-        db.session.commit()
-
-        return redirect(url_for('structure.task', task_id=task_id))
-
-    # def deactivate_word(obj_response, word_id):
-    def deactivate_word(word_id):
-        # obj_response.alert(f'deactivate {word_id}')
-        task = Task.query.filter_by(id=task_id).first()
-        active_words = task.elements['words_id_active_or_to_del']
-        active_words.remove(word_id)
-        task.elements['words_id_active_or_to_del'] = active_words
-        db.session.commit()
-
-        return redirect(url_for('structure.task', task_id=task_id))
-    #
-    # if g.sijax.is_sijax_request:
-    #     g.sijax.register_callback('say_hello', activate_word)
-    #     g.sijax.register_callback('say_goodbye', deactivate_word)
-    #     return g.sijax.process_request()
 
     class RenderWord(Word):
         def __init__(self, word):
@@ -287,17 +253,20 @@ def task_1_word_image(task_id):
         db.session.commit()
         return redirect(url_for('structure.lesson', lesson_id=task.lesson_id))
 
-    if request.method == 'POST':
-        show = request.args
-        if request.args:
-            word_id = int(request.form.get('act-word-checkbox'))
-            active_words_id = Task.query.filter_by(id=task_id).first().elements.get('words_id_active_or_to_del')
-            if word_id not in active_words_id:
-                print(f'checked {word_id}')
-                activate_word(word_id)
-            else:
-                print(f'unchecked {word_id}')
-                deactivate_word(word_id)
+    def act_deact_word(obj_response, word_id):
+        task = Task.query.filter_by(id=task_id).first()
+        active_words = task.elements['words_id_active_or_to_del']
+        if word_id in active_words:
+            active_words.remove(word_id)
+            task.elements['words_id_active_or_to_del'] = active_words
+        else:
+            active_words.append(word_id)
+            task.elements['words_id_active_or_to_del'] = active_words
+        db.session.commit()
+
+    if g.sijax.is_sijax_request:
+        g.sijax.register_callback('act_deact_word_req', act_deact_word)
+        return g.sijax.process_request()
 
 
     return render_template('tasks/1_word_image.html',
@@ -307,8 +276,3 @@ def task_1_word_image(task_id):
                            words=words,
                            button_add=button_add,
                            )
-
-# @structure_blueprint.route('/get_toggled_status')
-# def toggled_status():
-#   current_status = request.args.get('status')
-#   return 'Toggled' if current_status == 'Untoggled' else 'Untoggled'
