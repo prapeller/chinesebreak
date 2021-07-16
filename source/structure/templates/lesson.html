@@ -3,6 +3,16 @@
 	lesson
 {% endblock %}
 
+{% block body_scripts %}
+	<!-- Latest Sortable -->
+	<script src="http://SortableJS.github.io/Sortable/Sortable.js"></script>
+
+	{#sortableList#}
+	<script>
+        Sortable.create(sortableList);
+	</script>
+{% endblock %}
+
 {% block content %}
 
 	<h1 class="display-5 fw-bold">Lesson</h1>

@@ -1,6 +1,43 @@
 {% extends 'base.html' %}
 
+{% block title %}
+	1_word_image
+{% endblock %}
+
+{% block head_scripts %}
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
+	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+
+{% endblock %}
+
+{% block body_scripts %}
+	<script>
+        $(document).ready(function () {
+            $('.toggle').click(function () {
+                var current_status = $('.status').text();
+                $.ajax({
+                    url: "/structure/get_toggled_status",
+                    type: "get",
+                    data: {status: current_status},
+                    success: function (response) {
+                        $(".status").html(response);
+                    },
+                    error: function (xhr) {
+                        //Do Something to handle error
+                    }
+                });
+            });
+        });
+	</script>
+{% endblock %}
+
+
 {% block content %}
+
+
 
 	<h1 class="display-5 fw-bold">Task</h1>
 	<p>{{ task }}</p>
@@ -28,6 +65,18 @@
 						</div>
 					</div>
 
+					{#					<input type="checkbox" class='toggle' checked data-toggle="toggle">#}
+					{#					<div class='status'>Toggled</div>#}
+
+					<div class="form-check form-switch">
+						<form id="form-{{ word.id }}" method="POST">
+							<input class="form-check-input" id="active" type="checkbox"
+							       onchange="$('#form-{{ word.id }}').submit();" name="act-word-checkbox"
+							       value="{{ word.id }}" checked/>
+							<label class="form-check-label" for="active">Active</label>
+						</form>
+					</div>
+
 				{% else %}
 					<div class="task-word-box inactive-word">
 						<div>
@@ -35,19 +84,41 @@
 							<div class="ib_char">{{ word.char }}</div>
 						</div>
 					</div>
+
+{#					<input type="checkbox" class='toggle' data-toggle="toggle">#}
+{#					<div class='status'>Toggled</div>#}
+
+					<div class="form-check form-switch">
+						<form id="form-{{ word.id }}" method="POST">
+							<input class="form-check-input" id="active" type="checkbox"
+							       onchange="$('#form-{{ word.id }}').submit();"
+							       name="act-word-checkbox"
+							       value="{{ word.id }}"/>
+							<label class="form-check-label" for="active">Active</label>
+						</form>
+					</div>
+
 				{% endif %}
 
-				<a class="add_to_task_act_elem"
-				   href="{{ url_for('structure.add_to_task_act_elem', task_id=task.id, element_type="word", element_id=word.id) }}">
-					add
-				</a>
 
-				<a class="remove_act_elem"
-				   href="{{ url_for('structure.remove_act_elem', task_id=task.id, element_type="word", element_id=word.id) }}">
-					rem
-				</a>
+				{#				<div class="form-check form-switch">#}
+				{#					<input class="form-check-input" type="checkbox" id="active" name="activate" value="{{ word.id }}">#}
+				{#					<label class="form-check-label" for="active">Active</label>#}
+				{#				</div>#}
+
+
+				{#				<a class="add_to_task_act_elem"#}
+				{#				   href="{{ url_for('structure.add_to_task_act_elem', task_id=task.id, element_type="word", element_id=word.id) }}">#}
+				{#					act#}
+				{#				</a>#}
+
+				{#				<a class="remove_act_elem"#}
+				{#				   href="{{ url_for('structure.remove_act_elem', task_id=task.id, element_type="word", element_id=word.id) }}">#}
+				{#					dct#}
+				{#				</a>#}
 			</div>
 		{% endfor %}
+		<br>
 	</div>
 
 	<p class="display-6">Active elements:</p>
@@ -63,6 +134,7 @@
 			</div>
 		{% endif %}
 	{% endfor %}
+
 
 	<div class="search_words">
 		<p class="display-6">Search words</p>

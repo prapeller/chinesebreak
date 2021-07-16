@@ -20,6 +20,16 @@
 	        integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
 	        crossorigin="anonymous"></script>
 
+{#	sijax scripts#}
+	<script type="text/javascript"
+	        src="http://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<script type="text/javascript" src="/static/js/sijax/sijax.js"></script>
+	<script type="text/javascript">
+        {{ g.sijax.get_js()|safe }}
+	</script>
+
+	{% block head_scripts %}
+	{% endblock %}
 </head>
 <body>
 
@@ -107,13 +117,9 @@
 	</div>
 </div>
 
-<!-- Latest Sortable -->
-<script src="http://SortableJS.github.io/Sortable/Sortable.js"></script>
+{% block body_scripts %}
 
-{#sortableList#}
-<script>
-    Sortable.create(sortableList);
-</script>
+{% endblock %}
 
 </body>
 </html>
