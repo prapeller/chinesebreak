@@ -5,8 +5,18 @@
 
 {% block content %}
 
-	<h1 class="display-5 fw-bold">Language</h1>
-	<p>{{ lang }}</p>
+	<div class="header">
+		<form method="POST">
+			{{ back_btn.hidden_tag() }}
+			<div class="back-btn-box">
+				{{ back_btn.back(class="back-btn-small") }}
+			</div>
+		</form>
+		<div class="header-text">
+			<h1 class="display-5 fw-bold">Language</h1>
+			<p>{{ lang }}</p>
+		</div>
+	</div>
 
 	<form method="POST">
 		{{ name_form.hidden_tag() }}

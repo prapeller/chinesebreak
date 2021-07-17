@@ -28,5 +28,5 @@ class SelectTaskTypeForm(FlaskForm):
     add = SubmitField(' ')
 
 
-# class ButtonSelectForm(FlaskForm):
-#     select = SubmitField(' ')
+class BackButtonForm(FlaskForm):
+    back = SubmitField(' ')

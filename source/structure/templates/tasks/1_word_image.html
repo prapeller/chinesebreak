@@ -1,23 +1,28 @@
 {% extends 'base.html' %}
 
 {% block title %}
-	1_word_image
+	{{ task_type.id }}_{{ task_type.name }}
 {% endblock %}
 
 
 {% block content %}
 
-	<h1 class="display-5 fw-bold">Task</h1>
-	<p>{{ task }}</p>
+	<div class="header words-task-type">
 
-	<form method="POST">
-		{{ button_delete.hidden_tag() }}
-		<div class="d-grid">
-			{{ button_delete.delete(class="btn btn_del") }}
+		<form method="POST">
+			{{ back_btn.hidden_tag() }}
+			<div class="back-btn-box">
+				{{ back_btn.back(class="back-btn-small") }}
+			</div>
+		</form>
+
+		<div class="header-text">
+			<p class="display-5 fw-bold">{{ task_type.id }}_{{ task_type.name }}</p>
+			<p>{{ task }}</p>
 		</div>
-	</form>
+	</div>
 
-	<p class="display-5">Task words:</p>
+	<p class="display-6">Task words:</p>
 
 	<div class="task-words">
 
@@ -31,9 +36,15 @@
 							<div class="cb_char">{{ word.char }}</div>
 						</div>
 					</div>
-					<div class="form-check form-switch">
+
+					<div class="under-word-btn-box form-switch">
 						<input href="javascript://" type="checkbox" class="form-check-input" checked
 						       onchange="Sijax.request('act_deact_word_req', [{{ word.id }}]);">
+					</div>
+					<div class="under-word-btn-box">
+						<a href="{{ url_for('structure.remove_from_task_word', task_id=task.id, word_id=word.id) }}">
+							<button class="remove-btn-small"></button>
+						</a>
 					</div>
 				</div>
 
@@ -45,35 +56,40 @@
 							<div class="ib_char">{{ word.char }}</div>
 						</div>
 					</div>
-					<div class="form-check form-switch">
+					<div class="under-word-btn-box form-switch">
 						<input href="javascript://" type="checkbox" class="form-check-input"
 						       onchange="Sijax.request('act_deact_word_req', [{{ word.id }}]);">
 					</div>
+					<div class="under-word-btn-box">
+						<a href="{{ url_for('structure.remove_from_task_word', task_id=task.id, word_id=word.id) }}">
+							<button class="remove-btn-small"></button>
+						</a>
+					</div>
+
 				</div>
 
 			{% endif %}
 		{% endfor %}
 	</div>
 
-	<p class="display-6">Active elements:</p>
+	<div class="active-elements">
+		<p class="display-6">Active elements:</p>
 
-	{% for word in task_words %}
-		{% if word.is_active %}
+		{% for word in task_words %}
+			{% if word.is_active %}
 
-			<div class="task-word-box">
-				<div>
-					<div class="cb_pinyin">{{ word.pinyin }}</div>
-					<div class="cb_char">{{ word.char }}</div>
+				<div class="task-word-box">
+					<div>
+						<div class="cb_pinyin">{{ word.pinyin }}</div>
+						<div class="cb_char">{{ word.char }}</div>
+					</div>
 				</div>
-			</div>
-		{% endif %}
-	{% endfor %}
-	</div>
-
+			{% endif %}
+		{% endfor %}</div>
 
 
 	<div class="search_words">
-		<p class="display-6">Search words</p>
+		<p class="display-6">Search words:</p>
 
 		<form class="d-flex nav-item my-lg-0" method="GET">
 			<input class="form-control me-2" type="search" placeholder="Search" name="search_key">
@@ -89,12 +105,18 @@
 		<br>
 
 		<form method="POST">
-			{{ button_add.hidden_tag() }}
+			{{ button_add_word.hidden_tag() }}
 			<div class="d-grid">
-				{{ button_add.add(class="btn btn_add") }}
+				{{ button_add_word.add(class="btn btn_add") }}
 			</div>
 		</form>
-
 	</div>
+
+	<form method="POST">
+		{{ button_delete_task.hidden_tag() }}
+		<div class="d-grid">
+			{{ button_delete_task.delete(class="btn btn_del") }}
+		</div>
+	</form>
 
 {% endblock %}

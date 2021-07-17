@@ -7,8 +7,18 @@
 
 {% block content %}
 
-	<h1 class="display-5 fw-bold">Topic</h1>
-	<p>{{ topic }}</p>
+	<div class="header">
+		<form method="POST">
+			{{ back_btn.hidden_tag() }}
+			<div class="back-btn-box">
+				{{ back_btn.back(class="back-btn-small") }}
+			</div>
+		</form>
+		<div class="header-text">
+			<h1 class="display-5 fw-bold">Topic</h1>
+			<p>{{ topic }}</p>
+		</div>
+	</div>
 
 	<div class="image_box">
 		<img class="image" src="{{ url_for(endpoint='static', filename='image/' + image_name) }}"

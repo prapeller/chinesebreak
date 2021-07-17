@@ -224,6 +224,17 @@ class Word(db.Model):
         return f'id: {self.id}, char: {self.char}, pinyin: {self.pinyin}, lang: {self.lang}, lit: {self.lit}'
 
 
+class TaskWord(Word):
+    def __init__(self, task_id, word):
+        self.id, self.pinyin, self.char, self.lang, self.lit = word.id, word.pinyin, word.char, word.lang, word.lit
+        if Media.query.filter_by(id=word.image_id).first():
+            self.image_name = Media.query.filter_by(id=word.image_id).first().name
+        if Media.query.filter_by(id=word.audio_id).first():
+            self.audio_name = Media.query.filter_by(id=word.audio_id).first().name
+        self.is_active = True if self.id in Task.query.filter_by(id=task_id).first().elements.get(
+            'words_id_active_or_to_del') else False
+
+
 class Media(db.Model):
     __tablename__ = 'media'
 

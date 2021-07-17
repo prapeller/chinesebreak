@@ -1,10 +1,9 @@
-import flask_sijax
-from source import app
-from flask import render_template, redirect, url_for, Blueprint, session, flash, request, g
-from source.admin_panel_models import Lang, Course, Topic, Lesson, Task, TaskType, Media, Word
-from flask_login import login_required, current_user
+from flask import render_template, redirect, url_for, Blueprint, session, flash, request
+from source.admin_panel_models import Lang, Course, Topic, Lesson, Task, Media
+from flask_login import current_user
 from source import db
-from source.structure.forms import ButtonAddForm, ButtonDeleteForm, NameForm, UploadImageForm
+
+from source.structure.forms import ButtonAddForm, ButtonDeleteForm, NameForm, UploadImageForm, BackButtonForm
 from source.static.media_handler import add_media
 from source.structure.forms import SelectTaskTypeForm
 
@@ -34,6 +33,10 @@ def lang(lang_id):
     button_delete = ButtonDeleteForm()
     button_add = ButtonAddForm()
 
+    back_btn = BackButtonForm()
+    if back_btn.validate_on_submit() and back_btn.back.data:
+        return redirect(url_for('structure.structure'))
+
     if name_form.validate_on_submit() and name_form.name.data:
         lang.name = name_form.name.data
         db.session.commit()
@@ -57,8 +60,8 @@ def lang(lang_id):
                            lang=lang,
                            courses=lang.courses,
                            name_form=name_form,
-                           button_delete=button_delete,
-                           button_add=button_add, )
+                           button_delete=button_delete, button_add=button_add, back_btn=back_btn,
+                           )
 
 
 @structure_blueprint.route('course_<int:course_id>/', methods=["GET", "POST"])
@@ -68,6 +71,10 @@ def course(course_id):
     name_form = NameForm()
     button_delete = ButtonDeleteForm()
     button_add = ButtonAddForm()
+
+    back_btn = BackButtonForm()
+    if back_btn.validate_on_submit() and back_btn.back.data:
+        return redirect(url_for('structure.lang', lang_id=course.lang_id))
 
     if name_form.validate_on_submit() and name_form.name.data:
         course.name = name_form.name.data
@@ -94,8 +101,8 @@ def course(course_id):
                            course=course,
                            topics=course.topics,
                            name_form=name_form,
-                           button_delete=button_delete,
-                           button_add=button_add, )
+                           button_delete=button_delete, button_add=button_add, back_btn=back_btn,
+                           )
 
 
 @structure_blueprint.route('topic_<int:topic_id>/', methods=["GET", "POST"])
@@ -108,6 +115,10 @@ def topic(topic_id):
     button_add = ButtonAddForm()
     topic_image_form = UploadImageForm()
     button_delete = ButtonDeleteForm()
+
+    back_btn = BackButtonForm()
+    if back_btn.validate_on_submit() and back_btn.back.data:
+        return redirect(url_for('structure.course', course_id=topic.course_id))
 
     if name_form.validate_on_submit() and name_form.name.data:
         topic.name = name_form.name.data
@@ -139,13 +150,17 @@ def topic(topic_id):
                            lessons=topic.lessons,
                            name_form=name_form,
                            topic_image_form=topic_image_form,
-                           button_delete=button_delete,
-                           button_add=button_add, )
+                           button_delete=button_delete, button_add=button_add, back_btn=back_btn
+                           )
 
 
 @structure_blueprint.route('lesson_<int:lesson_id>/', methods=["GET", "POST"])
 def lesson(lesson_id):
     lesson = Lesson.query.filter_by(id=lesson_id).first()
+
+    back_btn = BackButtonForm()
+    if back_btn.validate_on_submit() and back_btn.back.data:
+        return redirect(url_for('structure.topic', topic_id=lesson.topic_id))
 
     button_delete = ButtonDeleteForm()
     select_type_form = SelectTaskTypeForm()
@@ -168,15 +183,21 @@ def lesson(lesson_id):
                            tasks=lesson.tasks,
                            button_delete=button_delete,
                            select_type_form=select_type_form,
-                           button_add=button_add,
+                           button_add=button_add, back_btn=back_btn
                            )
 
 
 @structure_blueprint.route('render_task<int:task_id>/', methods=["GET", "POST"])
-def task(task_id):
+def render_task(task_id):
     task = Task.query.filter_by(id=task_id).first()
     if task.task_type_id == 1:
-        return redirect(url_for('structure.task_1_word_image', task_id=task_id))
+        return redirect(url_for('task_1_bp.render', task_id=task_id))
+    if task.task_type_id == 2:
+        return redirect(url_for('task_2_bp.render', task_id=task_id))
+    if task.task_type_id == 3:
+        return redirect(url_for('task_3_bp.render', task_id=task_id))
+    if task.task_type_id == 4:
+        return redirect(url_for('task_4_bp.render', task_id=task_id))
 
 
 @structure_blueprint.route('add_to_task_<int:task_id>_word_<int:word_id>/', methods=["GET", "POST"])
@@ -186,93 +207,14 @@ def add_to_task_word(task_id, word_id):
     words.append(word_id)
     task.elements['words_id'] = words
     db.session.commit()
-    return redirect(url_for('structure.task', task_id=task_id))
+    return redirect(url_for('structure.render_task', task_id=task_id))
 
 
-# @structure_blueprint.route('add_to_task_<int:task_id>_active_element_<string:element_type>_id_<int:element_id>/',
-#                            methods=["GET", "POST"])
-# def add_to_task_act_elem(task_id, element_type, element_id):
-#     if element_type == 'word':
-#         task = Task.query.filter_by(id=task_id).first()
-#         active_words = task.elements['words_id_active_or_to_del']
-#         active_words.append(element_id)
-#         task.elements['words_id_active_or_to_del'] = active_words
-#         db.session.commit()
-#
-#     return redirect(url_for('structure.task', task_id=task_id))
-#
-#
-# @structure_blueprint.route('remove_from_task_<int:task_id>_active_element_<string:element_type>_id_<int:element_id>/',
-#                            methods=["GET", "POST"])
-# def remove_act_elem(task_id, element_type, element_id):
-#     if element_type == 'word':
-#         task = Task.query.filter_by(id=task_id).first()
-#         active_words = task.elements['words_id_active_or_to_del']
-#         active_words.remove(element_id)
-#         task.elements['words_id_active_or_to_del'] = active_words
-#         db.session.commit()
-#
-#     return redirect(url_for('structure.task', task_id=task_id))
-
-
-# @structure_blueprint.route('task_1_word_image_<int:task_id>/', methods=["GET", "POST"])
-@flask_sijax.route(structure_blueprint, 'task_1_word_image_<int:task_id>/', methods=["GET", "POST"])
-def task_1_word_image(task_id):
-
-    class RenderWord(Word):
-        def __init__(self, word):
-            self.id, self.pinyin, self.char, self.lang, self.lit = word.id, word.pinyin, word.char, word.lang, word.lit
-            if Media.query.filter_by(id=word.image_id).first():
-                self.image_name = Media.query.filter_by(id=word.image_id).first().name
-            if Media.query.filter_by(id=word.audio_id).first():
-                self.audio_name = Media.query.filter_by(id=word.audio_id).first().name
-            self.is_active = True if self.id in Task.query.filter_by(id=task_id).first().elements.get(
-                'words_id_active_or_to_del') else False
-
+@structure_blueprint.route('remove_from_task_<int:task_id>_word_<int:word_id>/', methods=["GET", "POST"])
+def remove_from_task_word(task_id, word_id):
     task = Task.query.filter_by(id=task_id).first()
-    task_words_id_set = task.elements.get('words_id')
-    task_words = [RenderWord(word) for word in Word.query.filter(Word.id.in_(task_words_id_set)).all()]
-
-    search_val = request.args.get('search_key')
-    if search_val:
-        words = Word.query.filter(
-            Word.char.contains(search_val) | Word.pinyin.contains(search_val) | Word.lang.contains(search_val))
-    else:
-        words = Word.query.all()
-
-    button_add = ButtonAddForm()
-    if button_add.validate_on_submit() and button_add.add.data:
-        new_word = Word(char='新', pinyin='xīn', lang='новый')
-        db.session.add(new_word)
-        db.session.commit()
-        return redirect(url_for('elements.word', word_id=new_word.id))
-
-    button_delete = ButtonDeleteForm()
-    if button_delete.validate_on_submit() and button_delete.delete.data:
-        db.session.delete(task)
-        db.session.commit()
-        return redirect(url_for('structure.lesson', lesson_id=task.lesson_id))
-
-    def act_deact_word(obj_response, word_id):
-        task = Task.query.filter_by(id=task_id).first()
-        active_words = task.elements['words_id_active_or_to_del']
-        if word_id in active_words:
-            active_words.remove(word_id)
-            task.elements['words_id_active_or_to_del'] = active_words
-        else:
-            active_words.append(word_id)
-            task.elements['words_id_active_or_to_del'] = active_words
-        db.session.commit()
-
-    if g.sijax.is_sijax_request:
-        g.sijax.register_callback('act_deact_word_req', act_deact_word)
-        return g.sijax.process_request()
-
-
-    return render_template('tasks/1_word_image.html',
-                           task=task,
-                           button_delete=button_delete,
-                           task_words=task_words,
-                           words=words,
-                           button_add=button_add,
-                           )
+    words = task.elements['words_id']
+    words.remove(word_id)
+    task.elements['words_id'] = words
+    db.session.commit()
+    return redirect(url_for('structure.render_task', task_id=task_id))

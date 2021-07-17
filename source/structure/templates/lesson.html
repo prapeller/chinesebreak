@@ -15,8 +15,18 @@
 
 {% block content %}
 
-	<h1 class="display-5 fw-bold">Lesson</h1>
-	<p>{{ lesson }}</p>
+	<div class="header">
+		<form method="POST">
+			{{ back_btn.hidden_tag() }}
+			<div class="back-btn-box">
+				{{ back_btn.back(class="back-btn-small") }}
+			</div>
+		</form>
+		<div class="header-text">
+			<h1 class="display-5 fw-bold">Lesson</h1>
+			<p>{{ lesson }}</p>
+		</div>
+	</div>
 
 	<form method="POST">
 		{{ button_delete.hidden_tag() }}
@@ -27,22 +37,22 @@
 
 	<p class="display-6"> Tasks:</p>
 	<div id="sortableList" class="list-group">
-{#	<div id="listWithHandle" class="list-group">#}
+		{#	<div id="listWithHandle" class="list-group">#}
 		{% for task in tasks %}
-				{% if task.task_type_id in [1, 2, 3, 4, 5] %}
-					<a href="{{ url_for('structure.task', task_id=task.id) }}"
-					   class="list-group-item list-group-item-action list-group-item-warning">{{ task }}</a>
-				{% endif %}
+			{% if task.task_type_id in [1, 2, 3, 4, 5] %}
+				<a href="{{ url_for('structure.render_task', task_id=task.id) }}"
+				   class="list-group-item list-group-item-action words-task-type">{{ task }}</a>
+			{% endif %}
 
-{#				{% if task.task_type_id in [6, 7, 8, 9, 10, 11, 12, 13, 14] %}#}
-{#					<a href="{{ url_for('structure.task', task=task) }}"#}
-{#					   class="list-group-item list-group-item-action list-group-item-danger">{{ task }}</a>#}
-{#				{% endif %}#}
-{##}
-{#				{% if task.task_type_id in [15, 16, 17, 18] %}#}
-{#					<a href="{{ url_for('structure.task', task=task) }}"#}
-{#					   class="list-group-item list-group-item-action list-group-item-primary">{{ task }}</a>#}
-{#				{% endif %}#}
+			{% if task.task_type_id in [6, 7, 8, 9, 10, 11, 12, 13, 14] %}
+				<a href="{{ url_for('structure.task', task=task) }}"
+				   class="list-group-item list-group-item-action sent-task-type">{{ task }}</a>
+			{% endif %}
+			{##}
+			{% if task.task_type_id in [15, 16, 17, 18] %}
+				<a href="{{ url_for('structure.task', task=task) }}"
+				   class="list-group-item list-group-item-action dialog-task-type">{{ task }}</a>
+			{% endif %}
 		{% endfor %}
 	</div>
 	<br>
