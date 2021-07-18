@@ -30,3 +30,7 @@ class SelectTaskTypeForm(FlaskForm):
 
 class BackButtonForm(FlaskForm):
     back = SubmitField(' ')
+
+class UploadVideoForm(FlaskForm):
+    video = FileField('video', validators=[FileAllowed(['mp4'])])
+    upload = SubmitField('upload')

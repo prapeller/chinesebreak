@@ -194,6 +194,8 @@ class Task(db.Model):
     creator_admin_id = db.Column(db.ForeignKey('admins.id', ondelete='SET NULL', onupdate='CASCADE'), index=True)
     lesson_id = db.Column(db.ForeignKey('lessons.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
 
+    videos = db.relationship('Media', backref='task', cascade='all, delete')
+
     def __init__(self, task_type_id, creator_admin_id, lesson_id):
         self.task_type_id = task_type_id
         self.creator_admin_id = creator_admin_id
@@ -214,10 +216,12 @@ class Word(db.Model):
     lit = db.Column(db.String(50), index=True)
 
     image_id = db.Column(db.ForeignKey('media.id'))
-    audio_id = db.Column(db.ForeignKey('media.id'))
-    video_id = db.Column(db.ForeignKey('media.id'))
     images = db.relationship('Media', foreign_keys=[image_id], cascade='all, delete')
+
+    audio_id = db.Column(db.ForeignKey('media.id'))
     audios = db.relationship('Media', foreign_keys=[audio_id], cascade='all, delete')
+
+    video_id = db.Column(db.ForeignKey('media.id'))
     videos = db.relationship('Media', foreign_keys=[video_id], cascade='all, delete')
 
     def __repr__(self):
@@ -239,7 +243,7 @@ class Media(db.Model):
     __tablename__ = 'media'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False, index=True)
+    name = db.Column(db.String(50), nullable=False, index=True, unique=True)
     type = db.Column(db.Enum('mp4', 'mp3', 'png', 'jpg', 'gif', 'pdf', 'svg'))
     file_path = db.Column(db.String(2083))
 
@@ -247,6 +251,7 @@ class Media(db.Model):
     word_image_fk = db.Column(db.ForeignKey('words.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
     word_audio_fk = db.Column(db.ForeignKey('words.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
     word_video_fk = db.Column(db.ForeignKey('words.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
+    task_video_fk = db.Column(db.ForeignKey("tasks.id", ondelete='CASCADE', onupdate='CASCADE'), index=True)
 
 # class Character(db.Model):
 #     __tablename__ = 'character'

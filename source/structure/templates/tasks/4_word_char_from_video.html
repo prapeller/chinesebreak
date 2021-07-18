@@ -24,6 +24,14 @@
 
 	<p class="display-6">Task words:</p>
 
+	<video class="video" src="{{ url_for(endpoint='static', filename='video/'+ video_name) }}" controls></video>
+
+	<form method="POST" enctype="multipart/form-data">
+		{{ upload_video_form.hidden_tag() }}
+		{{ upload_video_form.video(class="form-control") }}
+		{{ upload_video_form.upload }}
+	</form>
+
 	<div class="task-words">
 
 		{% for word in task_words %}

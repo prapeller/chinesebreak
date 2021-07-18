@@ -111,15 +111,12 @@ def topic(topic_id):
     image = Media.query.filter_by(id=topic.image_id).first()
     image_name = image.name if image else 'none'
 
-    name_form = NameForm()
-    button_add = ButtonAddForm()
-    topic_image_form = UploadImageForm()
-    button_delete = ButtonDeleteForm()
 
     back_btn = BackButtonForm()
     if back_btn.validate_on_submit() and back_btn.back.data:
         return redirect(url_for('structure.course', course_id=topic.course_id))
 
+    name_form = NameForm()
     if name_form.validate_on_submit() and name_form.name.data:
         topic.name = name_form.name.data
         db.session.commit()
@@ -127,17 +124,20 @@ def topic(topic_id):
     elif request.method == "GET":
         name_form.name.data = topic.name
 
+    topic_image_form = UploadImageForm()
     if topic_image_form.validate_on_submit() and topic_image_form.image.data:
         image_media = add_media(item=topic, file=topic_image_form.image.data)
         topic.image_id = image_media.id
         db.session.commit()
         return redirect(url_for('structure.topic', topic_id=topic.id))
 
+    button_delete = ButtonDeleteForm()
     if button_delete.validate_on_submit() and button_delete.delete.data:
         db.session.delete(topic)
         db.session.commit()
         return redirect(url_for('structure.course', course_id=topic.course_id))
 
+    button_add = ButtonAddForm()
     if button_add.validate_on_submit() and button_add.add.data:
         new_lesson = Lesson(creator_admin_id=current_user.id, topic_id=topic.id)
         db.session.add(new_lesson)

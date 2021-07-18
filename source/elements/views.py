@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, redirect, Blueprint, request, flash
+from flask import render_template, url_for, redirect, Blueprint, request, flash
 from source import db
 from source.elements.forms import ButtonAddForm, ButtonDeleteForm, UploadImageForm, UploadAudioForm, WordForm
 from source.admin_panel_models import Word, Media

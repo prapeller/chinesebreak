@@ -204,3 +204,7 @@
 .active-elements {
     margin-bottom: 30px;
 }
+
+.video {
+    width: 320px;
+}
