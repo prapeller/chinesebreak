@@ -17,6 +17,25 @@ class NameForm(FlaskForm):
     update = SubmitField('update')
 
 
+class RightSentForm(FlaskForm):
+    sent_char_A = StringField('sent_char_A')
+    sent_pinyin_A = StringField('sent_pinyin_A')
+    sent_lang_A = StringField('sent_lang_A')
+    sent_lit_A = StringField('sent_lit_A')
+    sent_char_B = StringField('sent_char_B')
+    sent_pinyin_B = StringField('sent_pinyin_B')
+    sent_lang_B = StringField('sent_lang_B')
+    sent_lit_B = StringField('sent_lit_B')
+    submit = SubmitField('submit')
+
+
+class WrongSentForm(FlaskForm):
+    sent_char = StringField('sent_char_A')
+    sent_pinyin = StringField('sent_pinyin_A')
+    sent_lang = StringField('sent_lang_A')
+    submit = SubmitField('submit')
+
+
 class UploadImageForm(FlaskForm):
     image = FileField('image', validators=[FileAllowed(['png', 'jpg', 'svg'])])
     upload = SubmitField('upload')
@@ -30,6 +49,7 @@ class SelectTaskTypeForm(FlaskForm):
 
 class BackButtonForm(FlaskForm):
     back = SubmitField(' ')
+
 
 class UploadVideoForm(FlaskForm):
     video = FileField('video', validators=[FileAllowed(['mp4'])])

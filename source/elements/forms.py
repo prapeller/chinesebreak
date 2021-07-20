@@ -37,3 +37,17 @@ class UploadImageForm(FlaskForm):
 class UploadAudioForm(FlaskForm):
     audio = FileField('audio', validators=[FileAllowed(['mp3', 'mp4'])])
     upload = SubmitField('upload')
+
+class BackButtonForm(FlaskForm):
+    back = SubmitField(' ')
+
+
+class GrammarForm(FlaskForm):
+    name = StringField('name')
+    explanation = StringField('explanation')
+    char = StringField('char')
+    pinyin = StringField('pinyin')
+    lang = StringField('lang')
+    lit = StringField('lit')
+    structure = StringField('structure')
+    update = SubmitField('update')

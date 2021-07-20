@@ -45,7 +45,7 @@
 			{% endif %}
 
 			{% if task.task_type_id in [6, 7, 8, 9, 10, 11, 12, 13, 14] %}
-				<a href="{{ url_for('structure.task', task=task) }}"
+				<a href="{{ url_for('structure.render_task', task_id=task.id) }}"
 				   class="list-group-item list-group-item-action sent-task-type">{{ task }}</a>
 			{% endif %}
 			{##}

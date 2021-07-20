@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+		<div class="header">
+
+		<form method="POST">
+			{{ back_btn.hidden_tag() }}
+			<div class="back-btn-box">
+				{{ back_btn.back(class="back-btn-small") }}
+			</div>
+		</form>
+
+		<div class="header-text">
+			<p class="display-5 fw-bold">Grammar</p>
+			<p>{{ grammar }}</p>
+		</div>
+	</div>
+
+	<form method="POST">
+		{{ grammar_form.hidden_tag() }}
+
+		{{ grammar_form.name.label(class="form-label") }}
+		{{ grammar_form.name(class="form-control") }}
+
+		{{ grammar_form.explanation.label(class="form-label") }}
+		{{ grammar_form.explanation(class="form-control") }}
+
+		{{ grammar_form.char.label(class="form-label") }}
+		{{ grammar_form.char(class="form-control") }}
+
+		{{ grammar_form.pinyin.label(class="form-label") }}
+		{{ grammar_form.pinyin(class="form-control") }}
+
+		{{ grammar_form.lang.label(class="form-label") }}
+		{{ grammar_form.lang(class="form-control") }}
+
+		{{ grammar_form.lit.label(class="form-label") }}
+		{{ grammar_form.lit(class="form-control") }}
+
+		{{ grammar_form.structure.label(class="form-label") }}
+		{{ grammar_form.structure(class="form-control") }}
+
+		{{ grammar_form.update }}
+	</form>
+
+	<form method="POST">
+		{{ button_delete.hidden_tag() }}
+		<div class="d-grid">
+			{{ button_delete.delete(class="btn btn_del") }}
+		</div>
+	</form>
+{% endblock %}

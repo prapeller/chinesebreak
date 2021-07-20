@@ -1,8 +1,9 @@
 from flask import render_template, url_for, redirect, Blueprint, request, flash
 from source import db
-from source.elements.forms import ButtonAddForm, ButtonDeleteForm, UploadImageForm, UploadAudioForm, WordForm
-from source.admin_panel_models import Word, Media
-from source.static.media_handler import add_media
+from source.elements.forms import ButtonAddForm, ButtonDeleteForm, UploadImageForm, UploadAudioForm, WordForm, \
+    BackButtonForm, GrammarForm
+from source.admin_panel_models import Word, Media, Grammar
+from source.static.media_handler import add_to_word_image, add_to_word_audio
 
 elements_blueprint = Blueprint('elements', __name__, url_prefix='/elements', template_folder='templates')
 
@@ -38,6 +39,10 @@ def word(word_id):
     audio = Media.query.filter_by(id=word.audio_id).first()
     audio_name = audio.name if audio else 'none'
 
+    back_btn = BackButtonForm()
+    if back_btn.validate_on_submit() and back_btn.back.data:
+        return redirect(url_for('elements.words'))
+
     button_delete = ButtonDeleteForm()
     if button_delete.validate_on_submit() and button_delete.delete.data:
         db.session.delete(word)
@@ -62,14 +67,14 @@ def word(word_id):
 
     word_image_form = UploadImageForm()
     if word_image_form.validate_on_submit() and word_image_form.image.data:
-        image_media = add_media(item=word, file=word_image_form.image.data)
+        image_media = add_to_word_image(word=word, file=word_image_form.image.data)
         word.image_id = image_media.id
         db.session.commit()
         return redirect(url_for('elements.word', word_id=word.id))
 
     word_audio_form = UploadAudioForm()
     if word_audio_form.validate_on_submit() and word_audio_form.audio.data:
-        audio_media = add_media(item=word, file=word_audio_form.audio.data)
+        audio_media = add_to_word_audio(word=word, file=word_audio_form.audio.data)
         word.audio_id = audio_media.id
         db.session.commit()
         return redirect(url_for('elements.word', word_id=word.id))
@@ -80,6 +85,86 @@ def word(word_id):
                            audio_name=audio_name,
                            word_image_form=word_image_form,
                            word_audio_form=word_audio_form,
-                           button_delete=button_delete,
+                           button_delete=button_delete, back_btn=back_btn,
                            word_form=word_form,
+                           )
+
+
+@elements_blueprint.route('/grammars', methods=['GET', 'POST'])
+def grammars():
+    search_val = request.args.get('search_key')
+    if search_val:
+        grammars = Grammar.query.filter(
+            Grammar.name.contains(search_val) |
+            Grammar.explanation.contains(search_val) |
+            Grammar.char.contains(search_val) |
+            Grammar.pinyin.contains(search_val) |
+            Grammar.lang.contains(search_val) |
+            Grammar.lit.contains(search_val) |
+            Grammar.structure.contains(search_val)
+        )
+    else:
+        grammars = Grammar.query.all()
+
+    button_add = ButtonAddForm()
+
+    if button_add.validate_on_submit() and button_add.add.data:
+        new_grammar = Grammar(
+            name='новая грамматика',
+            explanation='новое объяснение грамматики',
+            char='带有示例语法的新句子',
+            pinyin='dài yǒu shìlì yǔfǎ de xīn jùzi',
+            lang='новое предложение с примером грамматики',
+            structure='новая структура'
+        )
+        db.session.add(new_grammar)
+        db.session.commit()
+        return redirect(url_for('elements.grammar', grammar_id=new_grammar.id))
+
+    return render_template('grammars.html',
+                           grammars=grammars,
+                           button_add=button_add,
+                           )
+
+
+@elements_blueprint.route('/grammar_<int:grammar_id>', methods=['GET', 'POST'])
+def grammar(grammar_id):
+    grammar = Grammar.query.filter_by(id=grammar_id).first()
+
+    back_btn = BackButtonForm()
+    if back_btn.validate_on_submit() and back_btn.back.data:
+        return redirect(url_for('elements.grammars'))
+
+    button_delete = ButtonDeleteForm()
+    if button_delete.validate_on_submit() and button_delete.delete.data:
+        db.session.delete(grammar)
+        db.session.commit()
+        flash('delete success')
+        return redirect(url_for('elements.grammars'))
+
+    grammar_form = GrammarForm()
+    if grammar_form.validate_on_submit() and grammar_form.update.data:
+        grammar.name = grammar_form.name.data
+        grammar.explanation = grammar_form.explanation.data
+        grammar.char = grammar_form.char.data
+        grammar.pinyin = grammar_form.pinyin.data
+        grammar.lang = grammar_form.lang.data
+        grammar.lit = grammar_form.lit.data
+        grammar.structure = grammar_form.structure.data
+        db.session.commit()
+        flash('update success')
+
+    elif request.method == "GET":
+        grammar_form.name.data = grammar.name
+        grammar_form.explanation.data = grammar.explanation
+        grammar_form.char.data = grammar.char
+        grammar_form.pinyin.data = grammar.pinyin
+        grammar_form.lang.data = grammar.lang
+        grammar_form.lit.data = grammar.lit
+        grammar_form.structure.data = grammar.structure
+
+    return render_template('grammar.html',
+                           grammar=grammar,
+                           grammar_form=grammar_form,
+                           button_delete=button_delete, back_btn=back_btn,
                            )

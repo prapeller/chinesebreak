@@ -1,66 +1,179 @@
 {% extends 'base.html' %}
 
+{% block title %}
+	{{ task_type.id }}_{{ task_type.name }}
+{% endblock %}
+
+
 {% block content %}
 
-	<h1>Task:</h1>
-	<h2>{{ task_type_name }}</h2>
-	<p>{{ task }}</p>
+	<div class="header sent-task-type">
 
-	<div>
 		<form method="POST">
-			{{ button_delete.hidden_tag() }}
-			{{ button_delete.delete }}
+			{{ back_btn.hidden_tag() }}
+			<div class="back-btn-box">
+				{{ back_btn.back(class="back-btn-small") }}
+			</div>
+		</form>
+
+		<div class="header-text">
+			<p class="display-5 fw-bold">{{ task_type.id }}_{{ task_type.name }}</p>
+			<p>{{ task }}</p>
+		</div>
+	</div>
+
+	<p class="display-6">task_images:</p>
+
+	<div class="task-images">
+		{% for sent_image in sent_images %}
+
+			{% if sent_images.index(sent_image) == 0 %}
+
+				<div class="task-image">
+					<div class="image-box">
+						<img class="image active-word"
+						     src="{{ url_for(endpoint='static', filename='image/' + sent_image.name) }}"
+						     alt="ooops">
+					</div>
+
+					<div class="under-word-btn-box">
+						<a href="{{ url_for('structure.remove_from_task_image', task_id=task.id, sent_image_id=sent_image.id) }}">
+							<button class="remove-btn-small"></button>
+						</a>
+					</div>
+				</div>
+
+			{% else %}
+
+				<div class="task-image">
+					<div class="image-box">
+						<img class="image inactive-word"
+						     src="{{ url_for(endpoint='static', filename='image/' + sent_image.name) }}"
+						     alt="ooops">
+					</div>
+
+					<div class="under-word-btn-box">
+						<a href="{{ url_for('structure.remove_from_task_image', task_id=task.id, sent_image_id=sent_image.id) }}">
+							<button class="remove-btn-small"></button>
+						</a>
+					</div>
+				</div>
+
+			{% endif %}
+		{% endfor %}
+	</div>
+
+
+	<form method="POST" enctype="multipart/form-data">
+		{{ task_image_form.hidden_tag() }}
+		{{ task_image_form.image(class="form-control") }}
+		{{ task_image_form.upload }}
+	</form>
+
+	<p class="display-6">task_words:</p>
+
+	<div class="task-words">
+
+		{% for word in task_words %}
+			{% if word.is_active %}
+
+				<div class="task-word">
+					<div class="task-word-box active-word">
+						<div>
+							<div class="cb_pinyin">{{ word.pinyin }}</div>
+							<div class="cb_char">{{ word.char }}</div>
+						</div>
+					</div>
+
+					<div class="under-word-btn-box form-switch">
+						<input href="javascript://" type="checkbox" class="form-check-input" checked
+						       onchange="Sijax.request('act_deact_word_req', [{{ word.id }}]);">
+					</div>
+					<div class="under-word-btn-box">
+						<a href="{{ url_for('structure.remove_from_task_word', task_id=task.id, word_id=word.id) }}">
+							<button class="remove-btn-small"></button>
+						</a>
+					</div>
+				</div>
+
+			{% else %}
+				<div class="task-word">
+					<div class="task-word-box inactive-word">
+						<div>
+							<div class="ib_pinyin">{{ word.pinyin }}</div>
+							<div class="ib_char">{{ word.char }}</div>
+						</div>
+					</div>
+					<div class="under-word-btn-box form-switch">
+						<input href="javascript://" type="checkbox" class="form-check-input"
+						       onchange="Sijax.request('act_deact_word_req', [{{ word.id }}]);">
+					</div>
+					<div class="under-word-btn-box">
+						<a href="{{ url_for('structure.remove_from_task_word', task_id=task.id, word_id=word.id) }}">
+							<button class="remove-btn-small"></button>
+						</a>
+					</div>
+
+				</div>
+
+			{% endif %}
+		{% endfor %}
+	</div>
+
+	<form method="POST">
+		{{ sent_form.hidden_tag() }}
+		<p class="display-6">sent_lang:</p>
+		{{ sent_form.sent_lang_A(class="form-control") }}
+		<p class="display-6">sent_lit:</p>
+		{{ sent_form.sent_lit_A(class="form-control") }}
+		{{ sent_form.submit }}
+	</form>
+
+	<div class="active-elements">
+		<p class="display-6">active_elements:</p>
+
+		{% for word in task_words %}
+			{% if word.is_active %}
+
+				<div class="task-word-box">
+					<div>
+						<div class="cb_pinyin">{{ word.pinyin }}</div>
+						<div class="cb_char">{{ word.char }}</div>
+					</div>
+				</div>
+			{% endif %}
+		{% endfor %}</div>
+
+
+	<div class="search_words">
+		<p class="display-6">search_words:</p>
+
+		<form class="d-flex nav-item my-lg-0" method="GET">
+			<input class="form-control me-2" type="search" placeholder="Search" name="search_key">
+			<button class="btn btn-outline-success" type="submit">Search</button>
+		</form>
+
+		{% for word in words %}
+			<div class="list-group">
+				<a href="{{ url_for('structure.add_to_task_word', task_id=task.id, word_id=word.id) }}"
+				   class="list-group-item list-group-item-action ">{{ word }}</a>
+			</div>
+		{% endfor %}
+		<br>
+
+		<form method="POST">
+			{{ button_add_word.hidden_tag() }}
+			<div class="d-grid">
+				{{ button_add_word.add(class="btn btn_add") }}
+			</div>
 		</form>
 	</div>
-	<br>
 
-
-	<h3>Elements:</h3>
-	{% for element in elements %}
-
-		<ul>
-			<li>
-				{{ element }}
-			</li>
-		</ul>
-
-	{% endfor %}
-	<br>
-
-	<h3>Right sentences:</h3>
-	{% for sent in right_sentences %}
-
-		<ul>
-			<li>
-				{{ sent }}
-			</li>
-		</ul>
-
-	{% endfor %}
-	<br>
-
-	<h3>Wrong sentences:</h3>
-	{% for sent in wrong_sentences %}
-
-		<ul>
-			<li>
-				{{ sent }}
-			</li>
-		</ul>
-
-	{% endfor %}
-	<br>
-
-	<h3>Media:</h3>
-	{% for file in media %}
-
-		<ul>
-			<li>
-				{{ file }}
-			</li>
-		</ul>
-
-	{% endfor %}
-	<br>
+	<form method="POST">
+		{{ button_delete_task.hidden_tag() }}
+		<div class="d-grid">
+			{{ button_delete_task.delete(class="btn btn_del") }}
+		</div>
+	</form>
 
 {% endblock %}

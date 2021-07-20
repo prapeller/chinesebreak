@@ -2,8 +2,20 @@
 
 {% block content %}
 
-	<h1 class="display-5 fw-bold">Word</h1>
-	{{ word }}
+		<div class="header">
+
+		<form method="POST">
+			{{ back_btn.hidden_tag() }}
+			<div class="back-btn-box">
+				{{ back_btn.back(class="back-btn-small") }}
+			</div>
+		</form>
+
+		<div class="header-text">
+			<p class="display-5 fw-bold">Word</p>
+			<p>{{ word }}</p>
+		</div>
+	</div>
 
 	<form method="POST">
 		{{ word_form.hidden_tag() }}
@@ -25,7 +37,7 @@
 
 	</form>
 
-	<div class="image_box shadow_light">
+	<div class="image-box shadow_light">
 		<div class="image_bottom">
 			<div class="ib_pinyin">{{ word.pinyin }}</div>
 			<div class="ib_char">{{ word.char }}</div>

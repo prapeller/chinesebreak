@@ -4,7 +4,7 @@ from flask_login import current_user
 from source import db
 
 from source.structure.forms import ButtonAddForm, ButtonDeleteForm, NameForm, UploadImageForm, BackButtonForm
-from source.static.media_handler import add_media
+from source.static.media_handler import add_to_topic_image
 from source.structure.forms import SelectTaskTypeForm
 
 structure_blueprint = Blueprint('structure', __name__, url_prefix='/structure', template_folder='templates')
@@ -126,7 +126,7 @@ def topic(topic_id):
 
     topic_image_form = UploadImageForm()
     if topic_image_form.validate_on_submit() and topic_image_form.image.data:
-        image_media = add_media(item=topic, file=topic_image_form.image.data)
+        image_media = add_to_topic_image(topic=topic, file=topic_image_form.image.data)
         topic.image_id = image_media.id
         db.session.commit()
         return redirect(url_for('structure.topic', topic_id=topic.id))
@@ -198,6 +198,10 @@ def render_task(task_id):
         return redirect(url_for('task_3_bp.render', task_id=task_id))
     if task.task_type_id == 4:
         return redirect(url_for('task_4_bp.render', task_id=task_id))
+    if task.task_type_id == 5:
+        return redirect(url_for('task_5_bp.render', task_id=task_id))
+    if task.task_type_id == 6:
+        return redirect(url_for('task_6_bp.render', task_id=task_id))
 
 
 @structure_blueprint.route('add_to_task_<int:task_id>_word_<int:word_id>/', methods=["GET", "POST"])
@@ -216,5 +220,16 @@ def remove_from_task_word(task_id, word_id):
     words = task.elements['words_id']
     words.remove(word_id)
     task.elements['words_id'] = words
+    db.session.commit()
+    return redirect(url_for('structure.render_task', task_id=task_id))
+
+@structure_blueprint.route('remove_from_task_<int:task_id>_image_<int:sent_image_id>/', methods=["GET", "POST"])
+def remove_from_task_image(task_id, sent_image_id):
+    task = Task.query.filter_by(id=task_id).first()
+    images_ids = [Media.query.filter_by(id=this_id).first().id for this_id in task.media['sent_images_id']]
+    media = Media.query.filter_by(id=sent_image_id).first()
+    images_ids.remove(media.id)
+    task.media['sent_images_id'] = images_ids
+    db.session.delete(media)
     db.session.commit()
     return redirect(url_for('structure.render_task', task_id=task_id))

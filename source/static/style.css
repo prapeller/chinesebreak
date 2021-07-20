@@ -45,12 +45,12 @@
     background-color: transparent;
 }
 
-.image_box {
+.image-box {
     position: relative;
     display: block;
     width: 160px;
     height: 160px;
-    color: white;
+    color: transparent;
     margin: 10px auto;
 }
 
@@ -196,6 +196,7 @@
 }
 .sent-task-type {
     background-color: #CC4125 !important;
+    color: white !important;
 }
 .dialog-task-type {
     background-color: #9900FF !important;
@@ -207,4 +208,14 @@
 
 .video {
     width: 320px;
+}
+
+.task-images {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.task-image{
+    display: flex;
+    flex-direction: column;
 }

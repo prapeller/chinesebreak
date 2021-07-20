@@ -45,7 +45,7 @@ class TaskType(db.Model):
     __tablename__ = 'task_types'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
+    name = db.Column(db.String(50))
     tasks = db.relationship('Task', backref='type')
 
 
@@ -194,7 +194,11 @@ class Task(db.Model):
     creator_admin_id = db.Column(db.ForeignKey('admins.id', ondelete='SET NULL', onupdate='CASCADE'), index=True)
     lesson_id = db.Column(db.ForeignKey('lessons.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
 
-    videos = db.relationship('Media', backref='task', cascade='all, delete')
+    video_id = db.Column(db.ForeignKey('media.id'))
+    videos = db.relationship('Media', foreign_keys=[video_id], cascade='all, delete')
+
+    # image_ids = media['sent_images_id']
+    # images = db.relationship('Media', foreign_keys=image_ids, cascade='all, delete')
 
     def __init__(self, task_type_id, creator_admin_id, lesson_id):
         self.task_type_id = task_type_id
@@ -204,6 +208,24 @@ class Task(db.Model):
     def __repr__(self):
         task_type_name = TaskType.query.filter_by(id=self.task_type_id).first().name
         return f'id_{self.id}_type_{task_type_name}_lesson_id_{self.lesson_id}'
+
+
+class Media(db.Model):
+    __tablename__ = 'media'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False, index=True, unique=True)
+    type = db.Column(db.Enum('mp4', 'mp3', 'png', 'jpg', 'gif', 'pdf', 'svg'))
+    file_path = db.Column(db.String(2083))
+
+    topic_image_fk = db.Column(db.ForeignKey('topics.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
+
+    word_image_fk = db.Column(db.ForeignKey('words.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
+    word_audio_fk = db.Column(db.ForeignKey('words.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
+    word_video_fk = db.Column(db.ForeignKey('words.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
+
+    task_video_fk = db.Column(db.ForeignKey("tasks.id", ondelete='CASCADE', onupdate='CASCADE'), index=True)
+    # task_image_fk = db.Column(db.ForeignKey("tasks.id", ondelete='CASCADE', onupdate='CASCADE'), index=True)
 
 
 class Word(db.Model):
@@ -216,12 +238,11 @@ class Word(db.Model):
     lit = db.Column(db.String(50), index=True)
 
     image_id = db.Column(db.ForeignKey('media.id'))
-    images = db.relationship('Media', foreign_keys=[image_id], cascade='all, delete')
-
     audio_id = db.Column(db.ForeignKey('media.id'))
-    audios = db.relationship('Media', foreign_keys=[audio_id], cascade='all, delete')
-
     video_id = db.Column(db.ForeignKey('media.id'))
+
+    images = db.relationship('Media', foreign_keys=[image_id], cascade='all, delete')
+    audios = db.relationship('Media', foreign_keys=[audio_id], cascade='all, delete')
     videos = db.relationship('Media', foreign_keys=[video_id], cascade='all, delete')
 
     def __repr__(self):
@@ -239,25 +260,25 @@ class TaskWord(Word):
             'words_id_active_or_to_del') else False
 
 
-class Media(db.Model):
-    __tablename__ = 'media'
+class Grammar(db.Model):
+    __tablename__ = 'grammars'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False, index=True, unique=True)
-    type = db.Column(db.Enum('mp4', 'mp3', 'png', 'jpg', 'gif', 'pdf', 'svg'))
-    file_path = db.Column(db.String(2083))
+    name = db.Column(db.String(512), index=True)
+    explanation = db.Column(db.Text, index=True)
+    char = db.Column(db.String(512), index=True)
+    pinyin = db.Column(db.String(512), index=True)
+    lang = db.Column(db.String(512), index=True)
+    lit = db.Column(db.String(512), index=True)
+    structure = db.Column(db.String(512), index=True)
 
-    topic_image_fk = db.Column(db.ForeignKey('topics.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
-    word_image_fk = db.Column(db.ForeignKey('words.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
-    word_audio_fk = db.Column(db.ForeignKey('words.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
-    word_video_fk = db.Column(db.ForeignKey('words.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
-    task_video_fk = db.Column(db.ForeignKey("tasks.id", ondelete='CASCADE', onupdate='CASCADE'), index=True)
+    def __repr__(self):
+        return f'id: {self.id}, name: {self.name}'
 
 # class Character(db.Model):
-#     __tablename__ = 'character'
+#     __tablename__ = 'characters'
 #
 #     id = db.Column(db.Integer, primary_key=True, unique=True)
-#     topic_id = db.Column(db.ForeignKey('topic.id'), index=True)
 #     char = db.Column(db.String(50), nullable=False, index=True)
 #     pinyin = db.Column(db.String(50), nullable=False, index=True)
 #     lang = db.Column(db.String(50), nullable=False, index=True)
@@ -270,19 +291,5 @@ class Media(db.Model):
 #     topic = db.relationship('Topic')
 #
 #
-# class Grammar(db.Model):
-#     __tablename__ = 'grammar'
-#
-#     id = db.Column(db.Integer, primary_key=True, unique=True)
-#     topic_id = db.Column(db.ForeignKey('topic.id'), index=True)
-#     name = db.Column(db.String(512), nullable=False, index=True)
-#     explanation = db.Column(db.Text, index=True)
-#     char = db.Column(db.String(512), nullable=False)
-#     pinyin = db.Column(db.String(512), nullable=False)
-#     lang = db.Column(db.String(512), nullable=False)
-#     lit = db.Column(db.String(512), nullable=False)
-#     structure = db.Column(db.String(512), nullable=False)
-#
-#     topic = db.relationship('Topic')
 #
 #
