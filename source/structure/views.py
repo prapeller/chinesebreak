@@ -207,9 +207,13 @@ def render_task(task_id):
 @structure_blueprint.route('add_to_task_<int:task_id>_word_<int:word_id>/', methods=["GET", "POST"])
 def add_to_task_word(task_id, word_id):
     task = Task.query.filter_by(id=task_id).first()
-    words = task.elements['words_id']
-    words.append(word_id)
-    task.elements['words_id'] = words
+    words_id_list = task.elements['words_id']
+    words_id_list.append(word_id)
+    active_words_id_list = task.elements['words_id_active_or_to_del']
+    active_words_id_list.append(0)
+    grammar_id_list = task.elements['grammar_id']
+    grammar_id_list.append(0)
+    task.elements['words_id'] = words_id_list
     db.session.commit()
     return redirect(url_for('structure.render_task', task_id=task_id))
 
@@ -217,9 +221,23 @@ def add_to_task_word(task_id, word_id):
 @structure_blueprint.route('remove_from_task_<int:task_id>_word_<int:word_id>/', methods=["GET", "POST"])
 def remove_from_task_word(task_id, word_id):
     task = Task.query.filter_by(id=task_id).first()
-    words = task.elements['words_id']
-    words.remove(word_id)
-    task.elements['words_id'] = words
+    words_id_list = task.elements['words_id']
+    word_idx = words_id_list.index(word_id)
+    words_id_list.pop(word_idx)
+    active_words_id_list = task.elements['words_id_active_or_to_del']
+    active_words_id_list.pop(word_idx)
+    grammar_id_list = task.elements['grammar_id']
+    grammar_id_list.pop(word_idx)
+    task.elements['words_id'] = words_id_list
+    db.session.commit()
+    return redirect(url_for('structure.render_task', task_id=task_id))
+
+@structure_blueprint.route('add_to_task_<int:task_id>_grammar_<int:grammar_id>/', methods=["GET", "POST"])
+def add_to_task_grammar(task_id, grammar_id):
+    task = Task.query.filter_by(id=task_id).first()
+    grammar_id_list = task.elements['grammar_id']
+    grammar_id_list[grammar_id_list.index('to_add_grammar')] = grammar_id
+    task.elements['grammar_id'] = grammar_id_list
     db.session.commit()
     return redirect(url_for('structure.render_task', task_id=task_id))
 

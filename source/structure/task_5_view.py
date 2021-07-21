@@ -1,6 +1,6 @@
 import flask_sijax
 from flask import render_template, redirect, url_for, Blueprint, request, g
-from source.admin_panel_models import Task, TaskType, Word, TaskWord
+from source.admin_panel_models import Task, TaskType, Word
 from source import db
 from source.structure.forms import ButtonAddForm, ButtonDeleteForm, BackButtonForm
 
@@ -11,8 +11,12 @@ task_5_bp = Blueprint('task_5_bp', __name__, url_prefix='/task_5_word_match', te
 def render(task_id):
     task = Task.query.filter_by(id=task_id).first()
     task_type = TaskType.query.filter_by(id=task.task_type_id).first()
-    task_words_id_set = task.elements.get('words_id')
-    task_words = [TaskWord(task_id, word) for word in Word.query.filter(Word.id.in_(task_words_id_set)).all()]
+
+    task_words_id_list = task.elements.get('words_id')
+    task_words = [Word.query.filter_by(id=id).first() for id in task_words_id_list]
+
+    active_task_words_id_list = task.elements.get('words_id_active_or_to_del')
+    active_task_words = [Word.query.filter_by(id=id).first() for id in active_task_words_id_list]
 
     back_btn = BackButtonForm()
     if back_btn.validate_on_submit() and back_btn.back.data:

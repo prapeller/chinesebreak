@@ -22,7 +22,7 @@
 		</div>
 	</div>
 
-	<p class="display-6">Task words:</p>
+	<p class="display-6">task_words:</p>
 
 	<video class="video" src="{{ url_for(endpoint='static', filename='video/'+ video_name) }}" controls></video>
 
@@ -49,9 +49,9 @@
 						<input href="javascript://" type="checkbox" class="form-check-input" checked
 						       onchange="Sijax.request('act_deact_word_req', [{{ word.id }}]);">
 					</div>
-					<div class="under-word-btn-box">
+					<div class="right-up-btn-box">
 						<a href="{{ url_for('structure.remove_from_task_word', task_id=task.id, word_id=word.id) }}">
-							<button class="remove-btn-small"></button>
+							<button class="btn-close"></button>
 						</a>
 					</div>
 				</div>
@@ -68,9 +68,9 @@
 						<input href="javascript://" type="checkbox" class="form-check-input"
 						       onchange="Sijax.request('act_deact_word_req', [{{ word.id }}]);">
 					</div>
-					<div class="under-word-btn-box">
+					<div class="right-up-btn-box">
 						<a href="{{ url_for('structure.remove_from_task_word', task_id=task.id, word_id=word.id) }}">
-							<button class="remove-btn-small"></button>
+							<button class="btn-close"></button>
 						</a>
 					</div>
 
@@ -81,7 +81,7 @@
 	</div>
 
 	<div class="active-elements">
-		<p class="display-6">Active elements:</p>
+		<p class="display-6">active_elements:</p>
 
 		{% for word in task_words %}
 			{% if word.is_active %}
@@ -97,7 +97,7 @@
 
 
 	<div class="search_words">
-		<p class="display-6">Search words:</p>
+		<p class="display-6">search_words:</p>
 
 		<form class="d-flex nav-item my-lg-0" method="GET">
 			<input class="form-control me-2" type="search" placeholder="Search" name="search_key">
