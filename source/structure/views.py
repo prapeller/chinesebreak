@@ -1,8 +1,7 @@
-from flask import render_template, redirect, url_for, Blueprint, session, flash, request
+from flask import render_template, redirect, url_for, Blueprint, flash, request
 from source.admin_panel_models import Lang, Course, Topic, Lesson, Task, Media
 from flask_login import current_user
 from source import db
-
 from source.structure.forms import ButtonAddForm, ButtonDeleteForm, NameForm, UploadImageForm, BackButtonForm
 from source.static.media_handler import add_to_topic_image
 from source.structure.forms import SelectTaskTypeForm
@@ -28,7 +27,6 @@ def structure():
 @structure_blueprint.route('lang_<int:lang_id>/', methods=["GET", "POST"])
 def lang(lang_id):
     lang = Lang.query.filter_by(id=lang_id).first()
-
     name_form = NameForm()
     button_delete = ButtonDeleteForm()
     button_add = ButtonAddForm()
@@ -111,7 +109,6 @@ def topic(topic_id):
     image = Media.query.filter_by(id=topic.image_id).first()
     image_name = image.name if image else 'none'
 
-
     back_btn = BackButtonForm()
     if back_btn.validate_on_submit() and back_btn.back.data:
         return redirect(url_for('structure.course', course_id=topic.course_id))
@@ -190,50 +187,7 @@ def lesson(lesson_id):
 @structure_blueprint.route('render_task<int:task_id>/', methods=["GET", "POST"])
 def render_task(task_id):
     task = Task.query.filter_by(id=task_id).first()
-    if task.task_type_id == 1:
-        return redirect(url_for('task_1_bp.render', task_id=task_id))
-    elif task.task_type_id == 2:
-        return redirect(url_for('task_2_bp.render', task_id=task_id))
-    elif task.task_type_id == 3:
-        return redirect(url_for('task_3_bp.render', task_id=task_id))
-    elif task.task_type_id == 4:
-        return redirect(url_for('task_4_bp.render', task_id=task_id))
-    elif task.task_type_id == 5:
-        return redirect(url_for('task_5_bp.render', task_id=task_id))
-    elif task.task_type_id == 6:
-        return redirect(url_for('task_6_bp.render', task_id=task_id))
-    elif task.task_type_id == 7:
-        return redirect(url_for('task_7_bp.render', task_id=task_id))
-    elif task.task_type_id == 8:
-        return redirect(url_for('task_8_bp.render', task_id=task_id))
-    elif task.task_type_id == 9:
-        return redirect(url_for('task_9_bp.render', task_id=task_id))
-    elif task.task_type_id == 10:
-        return redirect(url_for('task_10_bp.render', task_id=task_id))
-    elif task.task_type_id == 11:
-        return redirect(url_for('task_11_bp.render', task_id=task_id))
-    elif task.task_type_id == 12:
-        return redirect(url_for('task_12_bp.render', task_id=task_id))
-    elif task.task_type_id == 13:
-        return redirect(url_for('task_13_bp.render', task_id=task_id))
-    elif task.task_type_id == 14:
-        return redirect(url_for('task_14_bp.render', task_id=task_id))
-    elif task.task_type_id == 15:
-        return redirect(url_for('task_15_bp.render', task_id=task_id))
-    elif task.task_type_id == 16:
-        return redirect(url_for('task_16_bp.render', task_id=task_id))
-    elif task.task_type_id == 17:
-        return redirect(url_for('task_17_bp.render', task_id=task_id))
-    elif task.task_type_id == 18:
-        return redirect(url_for('task_18_bp.render', task_id=task_id))
-    elif task.task_type_id == 19:
-        return redirect(url_for('task_19_bp.render', task_id=task_id))
-    elif task.task_type_id == 20:
-        return redirect(url_for('task_20_bp.render', task_id=task_id))
-    elif task.task_type_id == 21:
-        return redirect(url_for('task_21_bp.render', task_id=task_id))
-    elif task.task_type_id == 22:
-        return redirect(url_for('task_22_bp.render', task_id=task_id))
+    return redirect(url_for(f'task_{task.task_type_id}_bp.render', task_id=task.id))
 
 
 @structure_blueprint.route('add_to_task_<int:task_id>_word_<int:word_id>/', methods=["GET", "POST"])
@@ -264,6 +218,7 @@ def remove_from_task_word(task_id, word_id):
     db.session.commit()
     return redirect(url_for('structure.render_task', task_id=task_id))
 
+
 @structure_blueprint.route('add_to_task_<int:task_id>_grammar_<int:grammar_id>/', methods=["GET", "POST"])
 def add_to_task_grammar(task_id, grammar_id):
     task = Task.query.filter_by(id=task_id).first()
@@ -272,6 +227,7 @@ def add_to_task_grammar(task_id, grammar_id):
     task.elements['grammar_id'] = grammar_id_list
     db.session.commit()
     return redirect(url_for('structure.render_task', task_id=task_id))
+
 
 @structure_blueprint.route('remove_from_task_<int:task_id>_image_<int:sent_image_id>/', methods=["GET", "POST"])
 def remove_from_task_image(task_id, sent_image_id):

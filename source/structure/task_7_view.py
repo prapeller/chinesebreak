@@ -111,7 +111,6 @@ def render(task_id):
         db.session.commit()
 
     def prepare_to_task_to_grammar(obj_response, word_id):
-        # task = Task.query.filter_by(id=task_id).first()
         words_id_list = task.elements['words_id']
         word_idx = words_id_list.index(word_id)
         grammar_id_list = task.elements['grammar_id']
@@ -123,23 +122,20 @@ def render(task_id):
 
         task.elements['grammar_id'] = grammar_id_list
         db.session.commit()
-        # return redirect(url_for('structure.render_task', task_id=task_id))
-
-    search_val = request.args.get('search_key')
-    if search_val:
-        words = Word.query.filter(
-            Word.char.contains(search_val) | Word.pinyin.contains(search_val) | Word.lang.contains(search_val))
-        grammars = Grammar.query.filter(
-            Grammar.name.contains(search_val) | Grammar.explanation.contains(search_val)
-        )
-    else:
-        words = Word.query.all()
-        grammars = Grammar.query.all()
 
     if g.sijax.is_sijax_request:
         g.sijax.register_callback('act_deact_word_req', act_deact_word)
         g.sijax.register_callback('prepare_to_task_to_grammar_req', prepare_to_task_to_grammar)
         return g.sijax.process_request()
+    search_val = request.args.get('search_key')
+
+    if search_val:
+        words = Word.query.filter(Word.char.contains(search_val) | Word.pinyin.contains(search_val) |
+                                  Word.lang.contains(search_val))
+        grammars = Grammar.query.filter(Grammar.name.contains(search_val) | Grammar.explanation.contains(search_val))
+    else:
+        words = Word.query.all()
+        grammars = Grammar.query.all()
 
     return render_template('tasks/7_sent_char_from_lang.html',
                            task=task, task_type=task_type, sent_images=sent_images,
@@ -148,11 +144,11 @@ def render(task_id):
                            back_btn=back_btn, button_delete_task=button_delete_task,
                            button_add_word=button_add_word,
                            button_add_grammar=button_add_grammar,
-                           words=words,
-                           task_words=task_words,
                            active_task_words_id_list=active_task_words_id_list,
+                           task_words=task_words,
                            active_task_words=active_task_words,
-                           grammars=grammars,
                            task_grammars_id_list=task_grammars_id_list,
                            task_grammars=task_grammars,
+                           words=words,
+                           grammars=grammars,
                            )

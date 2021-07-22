@@ -63,6 +63,7 @@ class UploadVideoForm(FlaskForm):
     video = FileField('video', validators=[FileAllowed(['mp4'])])
     upload = SubmitField('upload')
 
+
 class UploadSentAAudioForm(FlaskForm):
     sent_A_audio = FileField('audio', validators=[FileAllowed(['mp3'])])
     upload_sent_A_audio = SubmitField('upload')
