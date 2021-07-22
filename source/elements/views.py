@@ -107,7 +107,6 @@ def grammars():
         grammars = Grammar.query.all()
 
     button_add = ButtonAddForm()
-
     if button_add.validate_on_submit() and button_add.add.data:
         new_grammar = Grammar(
             name='новая грамматика',

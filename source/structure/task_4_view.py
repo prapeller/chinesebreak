@@ -18,7 +18,8 @@ def render(task_id):
     task_words = [Word.query.filter_by(id=id).first() for id in task_words_id_list]
 
     active_task_words_id_list = task.elements.get('words_id_active_or_to_del')
-    active_task_words = [Word.query.filter_by(id=id).first() for id in active_task_words_id_list]
+    active_task_words = [Word.query.filter_by(id=id).first() for id in active_task_words_id_list
+                         if Word.query.filter_by(id=id).first()]
 
     back_btn = BackButtonForm()
     if back_btn.validate_on_submit() and back_btn.back.data:
@@ -46,14 +47,16 @@ def render(task_id):
         return redirect(url_for('structure.lesson', lesson_id=task.lesson_id))
 
     def act_deact_word(obj_response, word_id):
-        task = Task.query.filter_by(id=task_id).first()
-        active_words = task.elements['words_id_active_or_to_del']
-        if word_id in active_words:
-            active_words.remove(word_id)
-            task.elements['words_id_active_or_to_del'] = active_words
+        words_id_lst = task.elements['words_id']
+        active_words_id_lst = task.elements['words_id_active_or_to_del']
+        word_idx = words_id_lst.index(word_id)
+
+        if active_words_id_lst[word_idx] == 0:
+            active_words_id_lst[word_idx] = word_id
         else:
-            active_words.append(word_id)
-            task.elements['words_id_active_or_to_del'] = active_words
+            active_words_id_lst[word_idx] = 0
+
+        task.elements['words_id_active_or_to_del'] = active_words_id_lst
         db.session.commit()
 
     search_val = request.args.get('search_key')
@@ -71,6 +74,8 @@ def render(task_id):
                            task=task, task_type=task_type, video_name=video_name,
                            upload_video_form=upload_video_form,
                            back_btn=back_btn, button_delete_task=button_delete_task, button_add_word=button_add_word,
-                           task_words=task_words,
                            words=words,
+                           task_words=task_words,
+                           active_task_words_id_list=active_task_words_id_list,
+                           active_task_words=active_task_words,
                            )

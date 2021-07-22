@@ -192,16 +192,48 @@ def render_task(task_id):
     task = Task.query.filter_by(id=task_id).first()
     if task.task_type_id == 1:
         return redirect(url_for('task_1_bp.render', task_id=task_id))
-    if task.task_type_id == 2:
+    elif task.task_type_id == 2:
         return redirect(url_for('task_2_bp.render', task_id=task_id))
-    if task.task_type_id == 3:
+    elif task.task_type_id == 3:
         return redirect(url_for('task_3_bp.render', task_id=task_id))
-    if task.task_type_id == 4:
+    elif task.task_type_id == 4:
         return redirect(url_for('task_4_bp.render', task_id=task_id))
-    if task.task_type_id == 5:
+    elif task.task_type_id == 5:
         return redirect(url_for('task_5_bp.render', task_id=task_id))
-    if task.task_type_id == 6:
+    elif task.task_type_id == 6:
         return redirect(url_for('task_6_bp.render', task_id=task_id))
+    elif task.task_type_id == 7:
+        return redirect(url_for('task_7_bp.render', task_id=task_id))
+    elif task.task_type_id == 8:
+        return redirect(url_for('task_8_bp.render', task_id=task_id))
+    elif task.task_type_id == 9:
+        return redirect(url_for('task_9_bp.render', task_id=task_id))
+    elif task.task_type_id == 10:
+        return redirect(url_for('task_10_bp.render', task_id=task_id))
+    elif task.task_type_id == 11:
+        return redirect(url_for('task_11_bp.render', task_id=task_id))
+    elif task.task_type_id == 12:
+        return redirect(url_for('task_12_bp.render', task_id=task_id))
+    elif task.task_type_id == 13:
+        return redirect(url_for('task_13_bp.render', task_id=task_id))
+    elif task.task_type_id == 14:
+        return redirect(url_for('task_14_bp.render', task_id=task_id))
+    elif task.task_type_id == 15:
+        return redirect(url_for('task_15_bp.render', task_id=task_id))
+    elif task.task_type_id == 16:
+        return redirect(url_for('task_16_bp.render', task_id=task_id))
+    elif task.task_type_id == 17:
+        return redirect(url_for('task_17_bp.render', task_id=task_id))
+    elif task.task_type_id == 18:
+        return redirect(url_for('task_18_bp.render', task_id=task_id))
+    elif task.task_type_id == 19:
+        return redirect(url_for('task_19_bp.render', task_id=task_id))
+    elif task.task_type_id == 20:
+        return redirect(url_for('task_20_bp.render', task_id=task_id))
+    elif task.task_type_id == 21:
+        return redirect(url_for('task_21_bp.render', task_id=task_id))
+    elif task.task_type_id == 22:
+        return redirect(url_for('task_22_bp.render', task_id=task_id))
 
 
 @structure_blueprint.route('add_to_task_<int:task_id>_word_<int:word_id>/', methods=["GET", "POST"])

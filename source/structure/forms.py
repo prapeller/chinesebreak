@@ -8,6 +8,14 @@ class ButtonAddForm(FlaskForm):
     add = SubmitField(' ')
 
 
+class ButtonAddWordForm(FlaskForm):
+    add_word = SubmitField(' ')
+
+
+class ButtonAddGrammarForm(FlaskForm):
+    add_grammar = SubmitField(' ')
+
+
 class ButtonDeleteForm(FlaskForm):
     delete = SubmitField(' ')
 
@@ -54,3 +62,7 @@ class BackButtonForm(FlaskForm):
 class UploadVideoForm(FlaskForm):
     video = FileField('video', validators=[FileAllowed(['mp4'])])
     upload = SubmitField('upload')
+
+class UploadSentAAudioForm(FlaskForm):
+    sent_A_audio = FileField('audio', validators=[FileAllowed(['mp3'])])
+    upload_sent_A_audio = SubmitField('upload')

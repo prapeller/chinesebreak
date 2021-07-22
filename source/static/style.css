@@ -129,8 +129,12 @@
     border: 4px solid #929CFF;
 }
 
+.active-grammar {
+    border: 4px solid #ffebb6;
+}
+
 .inactive-word {
-    /*border: 4px solid #FF819C;*/
+    border: 4px solid #FF819C;
 }
 
 .cb_pinyin {
@@ -149,9 +153,18 @@
     color: #4C4674;
 }
 
+.cb_name {
+    font-size: 23px;
+    line-height: 100%;
+    text-align: center;
+    margin: 0 auto;
+    color: #4C4674;
+}
+
 .task-words {
     display: flex;
     flex-wrap: wrap;
+    margin-bottom: 10px;
 }
 
 .task-word {
@@ -268,11 +281,11 @@
     flex-grow: 1;
 }
 
-.word-checkbox {
+.active-word-checkbox {
     background-color: #929CFF !important;
 }
 
-.grammar-checkbox {
+.active-grammar-checkbox {
     background-color: #FCE5CD !important;
     border-color: #ffebb6 !important;
 }

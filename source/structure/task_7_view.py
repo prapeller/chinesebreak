@@ -6,10 +6,10 @@ from source.structure.forms import UploadSentAAudioForm, ButtonAddWordForm, Butt
     BackButtonForm, RightSentForm, UploadImageForm
 from source.static.media_handler import add_to_task_image, add_to_task_sent_A_audio
 
-task_6_bp = Blueprint('task_6_bp', __name__, url_prefix='/task_6_sent_image', template_folder='templates')
+task_7_bp = Blueprint('task_7_bp', __name__, url_prefix='/task_7_sent_image', template_folder='templates')
 
 
-@flask_sijax.route(task_6_bp, '<int:task_id>/', methods=["GET", "POST"])
+@flask_sijax.route(task_7_bp, '<int:task_id>/', methods=["GET", "POST"])
 def render(task_id):
     task = Task.query.filter_by(id=task_id).first()
     task_type = TaskType.query.filter_by(id=task.task_type_id).first()
@@ -141,7 +141,7 @@ def render(task_id):
         g.sijax.register_callback('prepare_to_task_to_grammar_req', prepare_to_task_to_grammar)
         return g.sijax.process_request()
 
-    return render_template('tasks/6_sent_image.html',
+    return render_template('tasks/7_sent_char_from_lang.html',
                            task=task, task_type=task_type, sent_images=sent_images,
                            task_image_form=task_image_form, sent_form=sent_form, sent_A_audio_form=sent_A_audio_form,
                            sent_A_audio_name=sent_A_audio_name,
