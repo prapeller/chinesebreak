@@ -41,7 +41,7 @@ class WrongSentForm(FlaskForm):
     sent_char = StringField('sent_char_A')
     sent_pinyin = StringField('sent_pinyin_A')
     sent_lang = StringField('sent_lang_A')
-    submit = SubmitField('submit')
+    add_wrong_sent = SubmitField(' ')
 
 
 class UploadImageForm(FlaskForm):
@@ -67,3 +67,4 @@ class UploadVideoForm(FlaskForm):
 class UploadSentAAudioForm(FlaskForm):
     sent_A_audio = FileField('audio', validators=[FileAllowed(['mp3'])])
     upload_sent_A_audio = SubmitField('upload')
+

@@ -3,10 +3,10 @@ from flask import render_template, redirect, url_for, Blueprint, request, g, fla
 from source.admin_panel_models import Task, TaskType, Word, Media, Grammar
 from source import db
 from source.structure.forms import UploadSentAAudioForm, ButtonAddWordForm, ButtonAddGrammarForm, ButtonDeleteForm, \
-    BackButtonForm, RightSentForm, UploadImageForm
+    BackButtonForm, RightSentForm, WrongSentForm
 from source.static.media_handler import add_to_task_image, add_to_task_sent_A_audio
 
-task_7_bp = Blueprint('task_7_bp', __name__, url_prefix='/task_7_sent_image', template_folder='templates')
+task_7_bp = Blueprint('task_7_bp', __name__, url_prefix='/task_7_sent_char_from_lang', template_folder='templates')
 
 
 @flask_sijax.route(task_7_bp, '<int:task_id>/', methods=["GET", "POST"])
@@ -31,37 +31,30 @@ def render(task_id):
     task_grammars_id_list = task.elements.get('grammar_id')
     task_grammars = [Grammar.query.filter_by(id=id).first() for id in task_grammars_id_list]
 
-    sent_images_id_lst = task.media.get('sent_images_id')
-    if sent_images_id_lst:
-        sent_images = [Media.query.filter_by(id=id).first() for id in sent_images_id_lst]
-    else:
-        sent_images = []
+    right_sent_pinyin = ''.join(f'{word.pinyin} ' for word in task_words if word.pinyin)[:-1]
+    right_sent_char = ''.join(word.char for word in task_words if word.char)
 
-    task_image_form = UploadImageForm()
-    if task_image_form.validate_on_submit() and task_image_form.image.data:
-        image_media = add_to_task_image(task=task, file=task_image_form.image.data)
-        sent_images_id_lst = task.media.get('sent_images_id')
-        sent_images_id_lst.append(image_media.id)
-        task.media['sent_images_id'] = sent_images_id_lst
-        db.session.commit()
-        return redirect(url_for('task_6_bp.render', task_id=task.id))
+    wrong_sent_pinyin_lst = task.wrong_sentences['sent_pinyin']
+    wrong_sent_char_lst = task.wrong_sentences['sent_char']
+    wrong_sent_lst = list(zip(wrong_sent_pinyin_lst, wrong_sent_char_lst)) if (
+                wrong_sent_pinyin_lst and wrong_sent_char_lst) else []
 
     back_btn = BackButtonForm()
     if back_btn.validate_on_submit() and back_btn.back.data:
         return redirect(url_for('structure.lesson', lesson_id=task.lesson_id))
 
-    sent_form = RightSentForm()
-    if sent_form.validate_on_submit() and sent_form.submit.data:
-        sent_lang = sent_form.sent_lang_A.data
-        sent_lit = sent_form.sent_lit_A.data
+    right_sent_form = RightSentForm()
+    if right_sent_form.validate_on_submit() and right_sent_form.submit.data:
+        sent_lang = right_sent_form.sent_lang_A.data
+        sent_lit = right_sent_form.sent_lit_A.data
         task.right_sentences['sent_lang_A'] = [sent_lang]
         task.right_sentences['sent_lit_A'] = [sent_lit]
         db.session.commit()
         flash('sent_lang update success')
     elif request.method == "GET":
-        sent_form.sent_lang_A.data = task.right_sentences.get('sent_lang_A')[0] if task.right_sentences.get(
+        right_sent_form.sent_lang_A.data = task.right_sentences.get('sent_lang_A')[0] if task.right_sentences.get(
             'sent_lang_A') else ''
-        sent_form.sent_lit_A.data = task.right_sentences.get('sent_lit_A')[0] if task.right_sentences.get(
+        right_sent_form.sent_lit_A.data = task.right_sentences.get('sent_lit_A')[0] if task.right_sentences.get(
             'sent_lang_A') else ''
 
     sent_A_audio_form = UploadSentAAudioForm()
@@ -70,6 +63,22 @@ def render(task_id):
         sent_A_audio_id_lst = [audio_media.id] if audio_media else []
         task.media['sent_audio_A_id'] = sent_A_audio_id_lst
         db.session.commit()
+        return redirect(url_for('structure.render_task', task_id=task.id))
+
+    add_wrong_sent_form = WrongSentForm()
+    if add_wrong_sent_form.validate_on_submit() and add_wrong_sent_form.add_wrong_sent.data:
+        wrong_sent_pinyin = add_wrong_sent_form.sent_pinyin.data
+        wrong_sent_pinyin_lst = task.wrong_sentences['sent_pinyin']
+        wrong_sent_pinyin_lst.append(wrong_sent_pinyin)
+        task.wrong_sentences['sent_pinyin'] = wrong_sent_pinyin_lst
+
+        wrong_sent_char = add_wrong_sent_form.sent_char.data
+        wrong_sent_char_lst = task.wrong_sentences['sent_char']
+        wrong_sent_char_lst.append(wrong_sent_char)
+        task.wrong_sentences['sent_char'] = wrong_sent_char_lst
+
+        db.session.commit()
+        flash('wrong send was added successfully')
         return redirect(url_for('structure.render_task', task_id=task.id))
 
     button_add_word = ButtonAddWordForm()
@@ -93,7 +102,7 @@ def render(task_id):
         db.session.delete(task)
         if sent_A_audio:
             db.session.delete(sent_A_audio)
-        db.session.query(Media).filter(Media.id.in_([sent_image.id for sent_image in sent_images])).delete()
+        # db.session.query(Media).filter(Media.id.in_([sent_image.id for sent_image in sent_images])).delete()
         db.session.commit()
         return redirect(url_for('structure.lesson', lesson_id=task.lesson_id))
 
@@ -138,8 +147,8 @@ def render(task_id):
         grammars = Grammar.query.all()
 
     return render_template('tasks/7_sent_char_from_lang.html',
-                           task=task, task_type=task_type, sent_images=sent_images,
-                           task_image_form=task_image_form, sent_form=sent_form, sent_A_audio_form=sent_A_audio_form,
+                           task=task, task_type=task_type,
+                           right_sent_form=right_sent_form, sent_A_audio_form=sent_A_audio_form,
                            sent_A_audio_name=sent_A_audio_name,
                            back_btn=back_btn, button_delete_task=button_delete_task,
                            button_add_word=button_add_word,
@@ -147,6 +156,11 @@ def render(task_id):
                            active_task_words_id_list=active_task_words_id_list,
                            task_words=task_words,
                            active_task_words=active_task_words,
+
+                           right_sent_pinyin=right_sent_pinyin, right_sent_char=right_sent_char,
+                           add_wrong_sent_form=add_wrong_sent_form,
+                           wrong_sent_lst=wrong_sent_lst,
+
                            task_grammars_id_list=task_grammars_id_list,
                            task_grammars=task_grammars,
                            words=words,

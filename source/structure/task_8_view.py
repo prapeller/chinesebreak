@@ -3,13 +3,13 @@ from flask import render_template, redirect, url_for, Blueprint, request, g, fla
 from source.admin_panel_models import Task, TaskType, Word, Media, Grammar
 from source import db
 from source.structure.forms import UploadSentAAudioForm, ButtonAddWordForm, ButtonAddGrammarForm, ButtonDeleteForm, \
-    BackButtonForm, RightSentForm, UploadImageForm
+    BackButtonForm, RightSentForm, WrongSentForm
 from source.static.media_handler import add_to_task_image, add_to_task_sent_A_audio
 
-task_6_bp = Blueprint('task_6_bp', __name__, url_prefix='/task_6_sent_image', template_folder='templates')
+task_8_bp = Blueprint('task_8_bp', __name__, url_prefix='/8_sent_lang_from_char', template_folder='templates')
 
 
-@flask_sijax.route(task_6_bp, '<int:task_id>/', methods=["GET", "POST"])
+@flask_sijax.route(task_8_bp, '<int:task_id>/', methods=["GET", "POST"])
 def render(task_id):
     task = Task.query.filter_by(id=task_id).first()
     task_type = TaskType.query.filter_by(id=task.task_type_id).first()
@@ -24,45 +24,36 @@ def render(task_id):
     task_words_id_lst = task.elements.get('words_id')
     task_words = [Word.query.filter_by(id=id).first() for id in task_words_id_lst]
 
-    active_task_words_id_list = task.elements.get('words_id_active_or_to_del')
-    active_task_words = [Word.query.filter_by(id=id).first() for id in active_task_words_id_list
+    active_task_words_id_lst = task.elements.get('words_id_active_or_to_del')
+    active_task_words = [Word.query.filter_by(id=id).first() for id in active_task_words_id_lst
                          if Word.query.filter_by(id=id).first()]
 
     task_grammars_id_list = task.elements.get('grammar_id')
     task_grammars = [Grammar.query.filter_by(id=id).first() for id in task_grammars_id_list]
 
-    sent_images_id_lst = task.media.get('sent_images_id')
-    if sent_images_id_lst:
-        sent_images = [Media.query.filter_by(id=id).first() for id in sent_images_id_lst]
-    else:
-        sent_images = []
-
-    task_image_form = UploadImageForm()
-    if task_image_form.validate_on_submit() and task_image_form.image.data:
-        image_media = add_to_task_image(task=task, file=task_image_form.image.data)
-        sent_images_id_lst = task.media.get('sent_images_id')
-        sent_images_id_lst.append(image_media.id)
-        task.media['sent_images_id'] = sent_images_id_lst
-        db.session.commit()
-        return redirect(url_for('task_6_bp.render', task_id=task.id))
 
     back_btn = BackButtonForm()
     if back_btn.validate_on_submit() and back_btn.back.data:
         return redirect(url_for('structure.lesson', lesson_id=task.lesson_id))
 
-    sent_form = RightSentForm()
-    if sent_form.validate_on_submit() and sent_form.submit.data:
-        sent_lang = sent_form.sent_lang_A.data
-        sent_lit = sent_form.sent_lit_A.data
+    right_sent_lang = task.right_sentences['sent_lang_A'][0] if task.right_sentences['sent_lang_A'] else ''
+
+    right_sent_form = RightSentForm()
+    if right_sent_form.validate_on_submit() and right_sent_form.submit.data:
+        sent_lang = right_sent_form.sent_lang_A.data
         task.right_sentences['sent_lang_A'] = [sent_lang]
+
+        sent_lit = right_sent_form.sent_lit_A.data
         task.right_sentences['sent_lit_A'] = [sent_lit]
+
         db.session.commit()
         flash('sent_lang update success')
+        return redirect(url_for('structure.render_task', task_id=task.id))
     elif request.method == "GET":
-        sent_form.sent_lang_A.data = task.right_sentences.get('sent_lang_A')[0] if task.right_sentences.get(
+        right_sent_form.sent_lang_A.data = task.right_sentences.get('sent_lang_A')[0] if task.right_sentences.get(
             'sent_lang_A') else ''
-        sent_form.sent_lit_A.data = task.right_sentences.get('sent_lit_A')[0] if task.right_sentences.get(
-            'sent_lit_A') else ''
+        right_sent_form.sent_lit_A.data = task.right_sentences.get('sent_lit_A')[0] if task.right_sentences.get(
+            'sent_lang_A') else ''
 
     sent_A_audio_form = UploadSentAAudioForm()
     if sent_A_audio_form.validate_on_submit() and sent_A_audio_form.sent_A_audio.data:
@@ -70,6 +61,18 @@ def render(task_id):
         sent_A_audio_id_lst = [audio_media.id] if audio_media else []
         task.media['sent_audio_A_id'] = sent_A_audio_id_lst
         db.session.commit()
+        return redirect(url_for('structure.render_task', task_id=task.id))
+
+    wrong_sent_lst = task.wrong_sentences['sent_lang']
+    add_wrong_sent_form = WrongSentForm()
+    if add_wrong_sent_form.validate_on_submit() and add_wrong_sent_form.add_wrong_sent.data:
+        wrong_sent_lang = add_wrong_sent_form.sent_lang.data
+        wrong_sent_lang_lst = task.wrong_sentences['sent_lang']
+        wrong_sent_lang_lst.append(wrong_sent_lang)
+        task.wrong_sentences['sent_pinyin'] = wrong_sent_lang_lst
+
+        db.session.commit()
+        flash('wrong send was added successfully')
         return redirect(url_for('structure.render_task', task_id=task.id))
 
     button_add_word = ButtonAddWordForm()
@@ -93,7 +96,7 @@ def render(task_id):
         db.session.delete(task)
         if sent_A_audio:
             db.session.delete(sent_A_audio)
-        db.session.query(Media).filter(Media.id.in_([sent_image.id for sent_image in sent_images])).delete()
+        # db.session.query(Media).filter(Media.id.in_([sent_image.id for sent_image in sent_images])).delete()
         db.session.commit()
         return redirect(url_for('structure.lesson', lesson_id=task.lesson_id))
 
@@ -111,7 +114,6 @@ def render(task_id):
         db.session.commit()
 
     def prepare_to_task_to_grammar(obj_response, word_id):
-        # task = Task.query.filter_by(id=task_id).first()
         words_id_list = task.elements['words_id']
         word_idx = words_id_list.index(word_id)
         grammar_id_list = task.elements['grammar_id']
@@ -123,36 +125,38 @@ def render(task_id):
 
         task.elements['grammar_id'] = grammar_id_list
         db.session.commit()
-        # return redirect(url_for('structure.render_task', task_id=task_id))
-
-    search_val = request.args.get('search_key')
-    if search_val:
-        words = Word.query.filter(
-            Word.char.contains(search_val) | Word.pinyin.contains(search_val) | Word.lang.contains(search_val))
-        grammars = Grammar.query.filter(
-            Grammar.name.contains(search_val) | Grammar.explanation.contains(search_val)
-        )
-    else:
-        words = Word.query.all()
-        grammars = Grammar.query.all()
 
     if g.sijax.is_sijax_request:
         g.sijax.register_callback('act_deact_word_req', act_deact_word)
         g.sijax.register_callback('prepare_to_task_to_grammar_req', prepare_to_task_to_grammar)
         return g.sijax.process_request()
+    search_val = request.args.get('search_key')
 
-    return render_template('tasks/6_sent_image.html',
-                           task=task, task_type=task_type, sent_images=sent_images,
-                           task_image_form=task_image_form, sent_form=sent_form, sent_A_audio_form=sent_A_audio_form,
+    if search_val:
+        words = Word.query.filter(Word.char.contains(search_val) | Word.pinyin.contains(search_val) |
+                                  Word.lang.contains(search_val))
+        grammars = Grammar.query.filter(Grammar.name.contains(search_val) | Grammar.explanation.contains(search_val))
+    else:
+        words = Word.query.all()
+        grammars = Grammar.query.all()
+
+    return render_template('tasks/8_sent_lang_from_char.html',
+                           task=task, task_type=task_type,
+                           right_sent_form=right_sent_form, sent_A_audio_form=sent_A_audio_form,
                            sent_A_audio_name=sent_A_audio_name,
                            back_btn=back_btn, button_delete_task=button_delete_task,
                            button_add_word=button_add_word,
                            button_add_grammar=button_add_grammar,
-                           words=words,
+                           active_task_words_id_lst=active_task_words_id_lst,
                            task_words=task_words,
-                           active_task_words_id_list=active_task_words_id_list,
                            active_task_words=active_task_words,
-                           grammars=grammars,
+
+                           right_sent_lang=right_sent_lang,
+                           add_wrong_sent_form=add_wrong_sent_form,
+                           wrong_sent_lst=wrong_sent_lst,
+
                            task_grammars_id_list=task_grammars_id_list,
                            task_grammars=task_grammars,
+                           words=words,
+                           grammars=grammars,
                            )

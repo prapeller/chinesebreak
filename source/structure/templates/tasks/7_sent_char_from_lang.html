@@ -25,8 +25,42 @@
 	<p class="display-6">task_sents:</p>
 
 	<div class="task-sents">
+		<div class="right-sent-box">
+			<div class="rs_pinyin-box">
+				{{ right_sent_pinyin }}
+			</div>
+			<div class="rs_char-box">
+				{{ right_sent_char }}
+			</div>
+
+		</div>
+
+		{% for wrong_sent in wrong_sent_lst %}
+			<div class="wrong-sent-box">
+				<div class="ws_pinyin">
+					{{ wrong_sent[0] }}
+				</div>
+				<div class="ws_char">
+					{{ wrong_sent[1] }}
+				</div>
+				<div class="right-up-btn-box">
+					<a href="{{ url_for('structure.remove_from_task_wrong_sent', task_id=task.id, sent_idx=wrong_sent_lst.index(wrong_sent)) }}">
+						<button class="btn-close"></button>
+					</a>
+				</div>
+			</div>
+		{% endfor %}
 
 	</div>
+
+	<form method="POST">
+		{{ add_wrong_sent_form.hidden_tag() }}
+		{{ add_wrong_sent_form.sent_pinyin(class="form-control", placeholder="wrong_sent_pinyin") }}
+		{{ add_wrong_sent_form.sent_char(class="form-control", placeholder="wrong_sent_char") }}
+		<div class="d-grid">
+			{{ add_wrong_sent_form.add_wrong_sent(class="btn btn_add") }}
+		</div>
+	</form>
 
 	<p class="display-6">task_words:</p>
 
@@ -107,14 +141,15 @@
 	</div>
 
 	<form method="POST">
-		{{ sent_form.hidden_tag() }}
+		{{ right_sent_form.hidden_tag() }}
 		<p class="display-6">sent_lang:</p>
-		{{ sent_form.sent_lang_A(class="form-control") }}
+		{{ right_sent_form.sent_lang_A(class="form-control") }}
 		<p class="display-6">sent_lit:</p>
-		{{ sent_form.sent_lit_A(class="form-control") }}
-		{{ sent_form.submit }}
+		{{ right_sent_form.sent_lit_A(class="form-control") }}
+		{{ right_sent_form.submit }}
 	</form>
 
+	<p class="display-6">sent_audio:</p>
 	<audio controls class="mb_10 ml_mr_auto br_20 shadow_light">
 		<source src="{{ url_for('static', filename='audio/' + sent_A_audio_name) }}">
 	</audio>

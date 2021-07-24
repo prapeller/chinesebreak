@@ -6,10 +6,10 @@ from source.structure.forms import UploadSentAAudioForm, ButtonAddWordForm, Butt
     BackButtonForm, RightSentForm, UploadImageForm
 from source.static.media_handler import add_to_task_image, add_to_task_sent_A_audio
 
-task_6_bp = Blueprint('task_6_bp', __name__, url_prefix='/task_6_sent_image', template_folder='templates')
+task_10_bp = Blueprint('task_10_bp', __name__, url_prefix='/task_10_sent_say_from_char', template_folder='templates')
 
 
-@flask_sijax.route(task_6_bp, '<int:task_id>/', methods=["GET", "POST"])
+@flask_sijax.route(task_10_bp, '<int:task_id>/', methods=["GET", "POST"])
 def render(task_id):
     task = Task.query.filter_by(id=task_id).first()
     task_type = TaskType.query.filter_by(id=task.task_type_id).first()
@@ -31,20 +31,15 @@ def render(task_id):
     task_grammars_id_list = task.elements.get('grammar_id')
     task_grammars = [Grammar.query.filter_by(id=id).first() for id in task_grammars_id_list]
 
+    to_display_words_id_lst = task.elements['words_id_to_display']
+    to_display_words = [Word.query.filter_by(id=id).first() for id in to_display_words_id_lst
+                         if Word.query.filter_by(id=id).first()]
+
     sent_images_id_lst = task.media.get('sent_images_id')
     if sent_images_id_lst:
         sent_images = [Media.query.filter_by(id=id).first() for id in sent_images_id_lst]
     else:
         sent_images = []
-
-    task_image_form = UploadImageForm()
-    if task_image_form.validate_on_submit() and task_image_form.image.data:
-        image_media = add_to_task_image(task=task, file=task_image_form.image.data)
-        sent_images_id_lst = task.media.get('sent_images_id')
-        sent_images_id_lst.append(image_media.id)
-        task.media['sent_images_id'] = sent_images_id_lst
-        db.session.commit()
-        return redirect(url_for('task_6_bp.render', task_id=task.id))
 
     back_btn = BackButtonForm()
     if back_btn.validate_on_submit() and back_btn.back.data:
@@ -53,9 +48,11 @@ def render(task_id):
     sent_form = RightSentForm()
     if sent_form.validate_on_submit() and sent_form.submit.data:
         sent_lang = sent_form.sent_lang_A.data
-        sent_lit = sent_form.sent_lit_A.data
         task.right_sentences['sent_lang_A'] = [sent_lang]
+
+        sent_lit = sent_form.sent_lit_A.data
         task.right_sentences['sent_lit_A'] = [sent_lit]
+
         db.session.commit()
         flash('sent_lang update success')
     elif request.method == "GET":
@@ -110,6 +107,19 @@ def render(task_id):
         task.elements['words_id_active_or_to_del'] = active_words_id_lst
         db.session.commit()
 
+    def display_undisplay_word(obj_response, word_id):
+        words_id_lst = task.elements['words_id']
+        word_idx = words_id_lst.index(word_id)
+        to_display_words_id_lst = task.elements['words_id_to_display']
+
+        if to_display_words_id_lst[word_idx] == 0:
+            to_display_words_id_lst[word_idx] = word_id
+        else:
+            to_display_words_id_lst[word_idx] = 0
+
+        task.elements['words_id_to_display'] = to_display_words_id_lst
+        db.session.commit()
+
     def prepare_to_task_to_grammar(obj_response, word_id):
         # task = Task.query.filter_by(id=task_id).first()
         words_id_list = task.elements['words_id']
@@ -139,11 +149,12 @@ def render(task_id):
     if g.sijax.is_sijax_request:
         g.sijax.register_callback('act_deact_word_req', act_deact_word)
         g.sijax.register_callback('prepare_to_task_to_grammar_req', prepare_to_task_to_grammar)
+        g.sijax.register_callback('display_undisplay_word_req', display_undisplay_word)
         return g.sijax.process_request()
 
-    return render_template('tasks/6_sent_image.html',
+    return render_template('tasks/10_sent_say_from_char.html',
                            task=task, task_type=task_type, sent_images=sent_images,
-                           task_image_form=task_image_form, sent_form=sent_form, sent_A_audio_form=sent_A_audio_form,
+                           sent_form=sent_form, sent_A_audio_form=sent_A_audio_form,
                            sent_A_audio_name=sent_A_audio_name,
                            back_btn=back_btn, button_delete_task=button_delete_task,
                            button_add_word=button_add_word,
@@ -152,6 +163,8 @@ def render(task_id):
                            task_words=task_words,
                            active_task_words_id_list=active_task_words_id_list,
                            active_task_words=active_task_words,
+                           to_display_words_id_lst=to_display_words_id_lst,
+                           to_display_words = to_display_words,
                            grammars=grammars,
                            task_grammars_id_list=task_grammars_id_list,
                            task_grammars=task_grammars,

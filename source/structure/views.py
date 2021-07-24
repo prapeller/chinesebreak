@@ -1,3 +1,4 @@
+from .. import app
 from flask import render_template, redirect, url_for, Blueprint, flash, request
 from source.admin_panel_models import Lang, Course, Topic, Lesson, Task, Media
 from flask_login import current_user
@@ -8,6 +9,10 @@ from source.structure.forms import SelectTaskTypeForm
 
 structure_blueprint = Blueprint('structure', __name__, url_prefix='/structure', template_folder='templates')
 
+
+@app.route('/')
+def start():
+    return redirect(url_for('admin_panel.main'))
 
 @structure_blueprint.route('/', methods=["GET", "POST"])
 def structure():
@@ -197,6 +202,8 @@ def add_to_task_word(task_id, word_id):
     words_id_list.append(word_id)
     active_words_id_list = task.elements['words_id_active_or_to_del']
     active_words_id_list.append(0)
+    to_display_words_id_lst = task.elements['words_id_to_display']
+    to_display_words_id_lst.append(0)
     grammar_id_list = task.elements['grammar_id']
     grammar_id_list.append(0)
     task.elements['words_id'] = words_id_list
@@ -212,12 +219,35 @@ def remove_from_task_word(task_id, word_id):
     words_id_list.pop(word_idx)
     active_words_id_list = task.elements['words_id_active_or_to_del']
     active_words_id_list.pop(word_idx)
+    to_display_words_id_lst = task.elements['words_id_to_display']
+    to_display_words_id_lst.pop(word_idx)
     grammar_id_list = task.elements['grammar_id']
     grammar_id_list.pop(word_idx)
     task.elements['words_id'] = words_id_list
     db.session.commit()
     return redirect(url_for('structure.render_task', task_id=task_id))
 
+@structure_blueprint.route('remove_from_task_<int:task_id>_wrong_sent_idx_<int:sent_idx>/', methods=["GET", "POST"])
+def remove_from_task_wrong_sent(task_id, sent_idx):
+    task = Task.query.filter_by(id=task_id).first()
+
+    wrong_sent_pinyin_lst = task.wrong_sentences['sent_pinyin']
+    if wrong_sent_pinyin_lst:
+        wrong_sent_pinyin_lst.pop(sent_idx)
+        task.wrong_sentences['sent_pinyin'] = wrong_sent_pinyin_lst
+
+    wrong_sent_char_lst = task.wrong_sentences['sent_char']
+    if wrong_sent_char_lst:
+        wrong_sent_char_lst.pop(sent_idx)
+        task.wrong_sentences['sent_char'] = wrong_sent_char_lst
+
+    wrong_sent_lang_lst = task.wrong_sentences['sent_lang']
+    if wrong_sent_lang_lst:
+        wrong_sent_lang_lst.pop(sent_idx)
+        task.wrong_sentences['sent_lang'] = wrong_sent_lang_lst
+
+    db.session.commit()
+    return redirect(url_for('structure.render_task', task_id=task_id))
 
 @structure_blueprint.route('add_to_task_<int:task_id>_grammar_<int:grammar_id>/', methods=["GET", "POST"])
 def add_to_task_grammar(task_id, grammar_id):

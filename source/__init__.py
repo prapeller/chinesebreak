@@ -77,6 +77,9 @@ from source.structure.task_4_view import task_4_bp
 from source.structure.task_5_view import task_5_bp
 from source.structure.task_6_view import task_6_bp
 from source.structure.task_7_view import task_7_bp
+from source.structure.task_8_view import task_8_bp
+from source.structure.task_9_view import task_9_bp
+from source.structure.task_10_view import task_10_bp
 
 app.register_blueprint(admin_panel_blueprint)
 app.register_blueprint(admins_blueprint)
@@ -89,5 +92,8 @@ app.register_blueprint(task_4_bp)
 app.register_blueprint(task_5_bp)
 app.register_blueprint(task_6_bp)
 app.register_blueprint(task_7_bp)
+app.register_blueprint(task_8_bp)
+app.register_blueprint(task_9_bp)
+app.register_blueprint(task_10_bp)
 
 
