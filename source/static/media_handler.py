@@ -134,3 +134,25 @@ def add_to_task_sent_A_audio(task, file):
     db.session.commit()
 
     return media
+
+
+def add_to_task_sent_B_audio(task, file):
+    filename = file.filename  # asdfagsd.mp3
+    ext_type = filename.split('.')[-1]  # mp3\
+    assert ext_type in ['mp3']
+    file_type = 'audio'
+    static_path = 'static\\audio'
+    filepath = os.path.join(current_app.root_path, static_path)  # .../source/static/audio/
+    storage_filename = f'task_{task.id}_sent_B_audio.{ext_type}'  # task_2_sent_A_audio.mp3
+    file.save(os.path.join(filepath, storage_filename))
+
+    if task.media.get('sent_audio_B_id'):
+        media = Media.query.filter_by(id=task.media.get('sent_audio_B_id')[0]).first()
+        media.name = storage_filename
+        media.type = ext_type
+    else:
+        media = Media(name=storage_filename, type=ext_type, file_path=filepath)
+        db.session.add(media)
+    db.session.commit()
+
+    return media

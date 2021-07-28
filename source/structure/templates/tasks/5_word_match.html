@@ -84,28 +84,22 @@
 	</div>
 
 
-	<div class="search_words">
-		<p class="display-6">search_words:</p>
+	<div class="search_elems">
+		<div class="search_words">
+			{% for word in words[:5] %}
+				<div class="list-group">
+					<a href="{{ url_for('structure.add_to_task_word', task_id=task.id, word_id=word.id) }}"
+					   class="list-group-item list-group-item-action ">{{ word }}</a>
+				</div>
+			{% endfor %}
 
-		<form class="d-flex nav-item my-lg-0" method="GET">
-			<input class="form-control me-2" type="search" placeholder="Search" name="search_key">
-			<button class="btn btn-outline-success" type="submit">Search</button>
-		</form>
-
-		{% for word in words %}
-			<div class="list-group">
-				<a href="{{ url_for('structure.add_to_task_word', task_id=task.id, word_id=word.id) }}"
-				   class="list-group-item list-group-item-action ">{{ word }}</a>
-			</div>
-		{% endfor %}
-		<br>
-
-		<form method="POST">
-			{{ button_add_word.hidden_tag() }}
-			<div class="d-grid">
-				{{ button_add_word.add(class="btn btn_add") }}
-			</div>
-		</form>
+			<form method="POST">
+				{{ button_add_word.hidden_tag() }}
+				<div class="d-grid">
+					{{ button_add_word.add_word(class="btn btn_add") }}
+				</div>
+			</form>
+		</div>
 	</div>
 
 	<form method="POST">

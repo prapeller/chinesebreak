@@ -4,7 +4,7 @@ from source.admin_panel_models import Lang, Course, Topic, Lesson, Task, TaskTyp
 from source import db
 from source.static.media_handler import add_to_task_video
 
-from source.structure.forms import ButtonAddForm, ButtonDeleteForm, NameForm, UploadVideoForm, BackButtonForm
+from source.structure.forms import ButtonAddWordForm, ButtonDeleteForm, NameForm, UploadVideoForm, BackButtonForm
 
 task_4_bp = Blueprint('task_4_bp', __name__, url_prefix='/task_4_word_char_from_video', template_folder='templates')
 
@@ -33,7 +33,7 @@ def render(task_id):
         return redirect(url_for('task_4_bp.render', task_id=task.id))
     video_name = Media.query.filter_by(id=task.media['sent_video_id'][0]).first().name if task.media['sent_video_id'] else 'None'
 
-    button_add_word = ButtonAddForm()
+    button_add_word = ButtonAddWordForm()
     if button_add_word.validate_on_submit() and button_add_word.add.data:
         new_word = Word(char='新', pinyin='xīn', lang='новый')
         db.session.add(new_word)

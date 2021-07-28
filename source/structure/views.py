@@ -210,6 +210,27 @@ def add_to_task_word(task_id, word_id):
     db.session.commit()
     return redirect(url_for('structure.render_task', task_id=task_id))
 
+@structure_blueprint.route('add_to_task_<int:task_id>_wrong_word_<int:word_id>/', methods=["GET", "POST"])
+def add_to_task_wrong_word(task_id, word_id):
+    task = Task.query.filter_by(id=task_id).first()
+    wrong_words_id_list = task.elements['words_id_wrong']
+    wrong_words_id_list.append(word_id)
+
+    task.elements['words_id_wrong'] = wrong_words_id_list
+    db.session.commit()
+    return redirect(url_for('structure.render_task', task_id=task_id))
+
+
+@structure_blueprint.route('remove_from_task_<int:task_id>_wrong_word_<int:word_id>/', methods=["GET", "POST"])
+def remove_from_task_wrong_word(task_id, word_id):
+    task = Task.query.filter_by(id=task_id).first()
+    wrong_words_id_list = task.elements['words_id_wrong']
+    wrong_words_id_list.remove(word_id)
+    task.elements['words_id_wrong'] = wrong_words_id_list
+
+    db.session.commit()
+    return redirect(url_for('structure.render_task', task_id=task_id))
+
 
 @structure_blueprint.route('remove_from_task_<int:task_id>_word_<int:word_id>/', methods=["GET", "POST"])
 def remove_from_task_word(task_id, word_id):

@@ -80,6 +80,12 @@ from source.structure.task_7_view import task_7_bp
 from source.structure.task_8_view import task_8_bp
 from source.structure.task_9_view import task_9_bp
 from source.structure.task_10_view import task_10_bp
+from source.structure.task_11_view import task_11_bp
+from source.structure.task_12_view import task_12_bp
+from source.structure.task_13_view import task_13_bp
+from source.structure.task_14_view import task_14_bp
+from source.structure.task_15_view import task_15_bp
+from source.structure.task_16_view import task_16_bp
 
 app.register_blueprint(admin_panel_blueprint)
 app.register_blueprint(admins_blueprint)
@@ -95,5 +101,11 @@ app.register_blueprint(task_7_bp)
 app.register_blueprint(task_8_bp)
 app.register_blueprint(task_9_bp)
 app.register_blueprint(task_10_bp)
+app.register_blueprint(task_11_bp)
+app.register_blueprint(task_12_bp)
+app.register_blueprint(task_13_bp)
+app.register_blueprint(task_14_bp)
+app.register_blueprint(task_15_bp)
+app.register_blueprint(task_16_bp)
 
 

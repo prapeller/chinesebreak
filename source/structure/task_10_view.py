@@ -3,8 +3,8 @@ from flask import render_template, redirect, url_for, Blueprint, request, g, fla
 from source.admin_panel_models import Task, TaskType, Word, Media, Grammar
 from source import db
 from source.structure.forms import UploadSentAAudioForm, ButtonAddWordForm, ButtonAddGrammarForm, ButtonDeleteForm, \
-    BackButtonForm, RightSentForm, UploadImageForm
-from source.static.media_handler import add_to_task_image, add_to_task_sent_A_audio
+    BackButtonForm, RightSentForm, UploadVideoForm
+from source.static.media_handler import add_to_task_video, add_to_task_sent_A_audio
 
 task_10_bp = Blueprint('task_10_bp', __name__, url_prefix='/task_10_sent_say_from_char', template_folder='templates')
 

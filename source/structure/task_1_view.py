@@ -2,7 +2,7 @@ import flask_sijax
 from flask import render_template, redirect, url_for, Blueprint, request, g
 from source.admin_panel_models import Task, TaskType, Word
 from source import db
-from source.structure.forms import ButtonAddForm, ButtonDeleteForm, BackButtonForm
+from source.structure.forms import ButtonAddWordForm, ButtonDeleteForm, BackButtonForm
 
 task_1_bp = Blueprint('task_1_bp', __name__, url_prefix='/task_1_word_image', template_folder='templates')
 
@@ -23,7 +23,7 @@ def render(task_id):
     if back_btn.validate_on_submit() and back_btn.back.data:
         return redirect(url_for('structure.lesson', lesson_id=task.lesson_id))
 
-    button_add_word = ButtonAddForm()
+    button_add_word = ButtonAddWordForm()
     if button_add_word.validate_on_submit() and button_add_word.add.data:
         new_word = Word(char='新', pinyin='xīn', lang='новый')
         db.session.add(new_word)

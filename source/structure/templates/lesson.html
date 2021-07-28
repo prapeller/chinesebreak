@@ -50,7 +50,7 @@
 			{% endif %}
 			{##}
 			{% if task.task_type_id in [15, 16, 17, 18] %}
-				<a href="{{ url_for('structure.task', task=task) }}"
+				<a href="{{ url_for('structure.render_task', task_id=task.id) }}"
 				   class="list-group-item list-group-item-action dialog-task-type">{{ task }}</a>
 			{% endif %}
 		{% endfor %}

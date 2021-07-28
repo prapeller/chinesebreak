@@ -24,17 +24,26 @@ class NameForm(FlaskForm):
     name = StringField('name')
     update = SubmitField('update')
 
-
 class RightSentForm(FlaskForm):
     sent_char_A = StringField('sent_char_A')
     sent_pinyin_A = StringField('sent_pinyin_A')
     sent_lang_A = StringField('sent_lang_A')
     sent_lit_A = StringField('sent_lit_A')
+    submit = SubmitField('submit')
+
+class RightSentAForm(FlaskForm):
+    sent_char_A = StringField('sent_char_A')
+    sent_pinyin_A = StringField('sent_pinyin_A')
+    sent_lang_A = StringField('sent_lang_A')
+    sent_lit_A = StringField('sent_lit_A')
+    submit_A = SubmitField('submit_A')
+
+class RightSentBForm(FlaskForm):
     sent_char_B = StringField('sent_char_B')
     sent_pinyin_B = StringField('sent_pinyin_B')
     sent_lang_B = StringField('sent_lang_B')
     sent_lit_B = StringField('sent_lit_B')
-    submit = SubmitField('submit')
+    submit_B = SubmitField('submit_B')
 
 
 class WrongSentForm(FlaskForm):
@@ -68,3 +77,7 @@ class UploadSentAAudioForm(FlaskForm):
     sent_A_audio = FileField('audio', validators=[FileAllowed(['mp3'])])
     upload_sent_A_audio = SubmitField('upload')
 
+
+class UploadSentBAudioForm(FlaskForm):
+    sent_B_audio = FileField('audio', validators=[FileAllowed(['mp3'])])
+    upload_sent_B_audio = SubmitField('upload')
