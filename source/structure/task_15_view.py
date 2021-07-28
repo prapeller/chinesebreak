@@ -196,16 +196,12 @@ def render(task_id):
                            add_wrong_sent_form=add_wrong_sent_form,
 
                            right_sent_A_form=right_sent_A_form,
-                           # sent_lang_A=sent_lang_A,
-                           # sent_lit_A=sent_lit_A,
                            sent_A_audio_form=sent_A_audio_form,
                            sent_A_audio_name=sent_A_audio_name,
 
                            right_sent_B_form=right_sent_B_form,
                            sent_pinyin_B=sent_pinyin_B,
                            sent_char_B=sent_char_B,
-                           # sent_lang_B=sent_lang_B,
-                           # sent_lit_B=sent_lit_B,
                            sent_B_audio_form=sent_B_audio_form,
                            sent_B_audio_name=sent_B_audio_name,
 
