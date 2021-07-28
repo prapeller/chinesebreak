@@ -22,8 +22,37 @@
 		</div>
 	</div>
 
-	<p class="display-6">sent_pinyin_A :</p>
-	<p class="display-6">sent_char_A :</p>
+
+	<form method="POST">
+		{{ right_sent_A_form.hidden_tag() }}
+		<p class="display-6">sent_char_A:</p>
+		{{ right_sent_A_form.sent_char_A(class="form-control") }}
+		<p class="display-6">sent_pinyin_A:</p>
+		{{ right_sent_A_form.sent_pinyin_A(class="form-control") }}
+		<p class="display-6">sent_lang_A:</p>
+		{{ right_sent_A_form.sent_lang_A(class="form-control") }}
+		<p class="display-6">sent_lit_A:</p>
+		{{ right_sent_A_form.sent_lit_A(class="form-control") }}
+		{{ right_sent_A_form.submit_A }}
+	</form>
+
+	<audio controls class="mb_10 ml_mr_auto br_20 shadow_light">
+		<source src="{{ url_for('static', filename='audio/' + sent_A_audio_name) }}">
+	</audio>
+
+	<form method="POST" enctype="multipart/form-data">
+		{{ sent_A_audio_form.hidden_tag() }}
+		{{ sent_A_audio_form.sent_A_audio(class="form-control") }}
+		{{ sent_A_audio_form.upload_sent_A_audio }}
+	</form>
+
+
+	{#	{% if task.elements.get('grammar_id') and task.elements.get('grammar_id')[word_ind] != 0 %}#}
+	{#		{{ task_grammars[word_ind] }}#}
+	{#	{% endif %}#}
+
+	<p class="display-6">sent_pinyin_B :</p>
+	<p class="display-6">sent_char_B :</p>
 
 	<div class="task-words">
 		{% for word in task_words %}
@@ -165,27 +194,7 @@
 		</div>
 	</div>
 
-	<form method="POST">
-		{{ right_sent_A_form.hidden_tag() }}
-		<p class="display-6">sent_lang_A:</p>
-		{{ right_sent_A_form.sent_lang_A(class="form-control") }}
-		<p class="display-6">sent_lit_A:</p>
-		{{ right_sent_A_form.sent_lit_A(class="form-control") }}
-		{{ right_sent_A_form.submit_A }}
-	</form>
-
-	<audio controls class="mb_10 ml_mr_auto br_20 shadow_light">
-		<source src="{{ url_for('static', filename='audio/' + sent_A_audio_name) }}">
-	</audio>
-
-	<form method="POST" enctype="multipart/form-data">
-		{{ sent_A_audio_form.hidden_tag() }}
-		{{ sent_A_audio_form.sent_A_audio(class="form-control") }}
-		{{ sent_A_audio_form.upload_sent_A_audio }}
-	</form>
-
-
-	<p class="display-6">active_elements:</p>
+		<p class="display-6">active_elements:</p>
 
 	<div class="active-elements">
 		{% for word in active_task_words %}
@@ -209,18 +218,9 @@
 		{% endfor %}
 	</div>
 
-	{#	{% if task.elements.get('grammar_id') and task.elements.get('grammar_id')[word_ind] != 0 %}#}
-	{#		{{ task_grammars[word_ind] }}#}
-	{#	{% endif %}#}
-
-
 
 	<form method="POST">
 		{{ right_sent_B_form.hidden_tag() }}
-		<p class="display-6">sent_char_B:</p>
-		{{ right_sent_B_form.sent_char_B(class="form-control") }}
-		<p class="display-6">sent_pinyin_B:</p>
-		{{ right_sent_B_form.sent_pinyin_B(class="form-control") }}
 		<p class="display-6">sent_lang_B:</p>
 		{{ right_sent_B_form.sent_lang_B(class="form-control") }}
 		<p class="display-6">sent_lit_B:</p>

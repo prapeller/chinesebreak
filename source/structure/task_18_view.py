@@ -74,6 +74,10 @@ def render(task_id):
     right_sent_B_form = RightSentBForm()
 
     if right_sent_A_form.validate_on_submit() and right_sent_A_form.submit_A.data:
+        sent_pinyin_A = right_sent_A_form.sent_pinyin_A.data
+        task.right_sentences['sent_pinyin_A'] = [sent_pinyin_A]
+        sent_char_A = right_sent_A_form.sent_char_A.data
+        task.right_sentences['sent_char_A'] = [sent_char_A]
         sent_lang_A = right_sent_A_form.sent_lang_A.data
         task.right_sentences['sent_lang_A'] = [sent_lang_A]
         sent_lit_A = right_sent_A_form.sent_lit_A.data
@@ -82,10 +86,6 @@ def render(task_id):
         flash('sent_A update success')
 
     if right_sent_B_form.validate_on_submit() and right_sent_B_form.submit_B.data:
-        sent_pinyin_B = right_sent_B_form.sent_pinyin_B.data
-        task.right_sentences['sent_pinyin_B'] = [sent_pinyin_B]
-        sent_char_B = right_sent_B_form.sent_char_B.data
-        task.right_sentences['sent_char_B'] = [sent_char_B]
         sent_lang_B = right_sent_B_form.sent_lang_B.data
         task.right_sentences['sent_lang_B'] = [sent_lang_B]
         sent_lit_B = right_sent_B_form.sent_lit_B.data
@@ -94,11 +94,11 @@ def render(task_id):
         flash('sent_B update success')
 
     # if request.method == "GET":
+    right_sent_A_form.sent_char_A.data = task.right_sentences.get('sent_char_A')[0] if task.right_sentences.get('sent_char_A') else ''
+    right_sent_A_form.sent_pinyin_A.data = task.right_sentences.get('sent_pinyin_A')[0] if task.right_sentences.get('sent_pinyin_A') else ''
     right_sent_A_form.sent_lang_A.data = task.right_sentences.get('sent_lang_A')[0] if task.right_sentences.get('sent_lang_A') else ''
     right_sent_A_form.sent_lit_A.data = task.right_sentences.get('sent_lit_A')[0] if task.right_sentences.get('sent_lit_A') else ''
 
-    right_sent_B_form.sent_char_B.data = task.right_sentences.get('sent_char_B')[0] if task.right_sentences.get('sent_char_B') else ''
-    right_sent_B_form.sent_pinyin_B.data = task.right_sentences.get('sent_pinyin_B')[0] if task.right_sentences.get('sent_pinyin_B') else ''
     right_sent_B_form.sent_lang_B.data = task.right_sentences.get('sent_lang_B')[0] if task.right_sentences.get('sent_lang_B') else ''
     right_sent_B_form.sent_lit_B.data = task.right_sentences.get('sent_lit_B')[0] if task.right_sentences.get('sent_lit_B') else ''
 

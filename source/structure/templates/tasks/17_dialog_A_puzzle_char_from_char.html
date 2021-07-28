@@ -185,8 +185,6 @@
 	</form>
 
 
-
-
 	<p class="display-6">active_elements:</p>
 
 	<div class="active-elements">
@@ -228,6 +226,16 @@
 		<p class="display-6">sent_lit_B:</p>
 		{{ right_sent_B_form.sent_lit_B(class="form-control") }}
 		{{ right_sent_B_form.submit_B }}
+	</form>
+
+	<audio controls class="mb_10 ml_mr_auto br_20 shadow_light">
+		<source src="{{ url_for('static', filename='audio/' + sent_B_audio_name) }}">
+	</audio>
+
+	<form method="POST" enctype="multipart/form-data">
+		{{ sent_B_audio_form.hidden_tag() }}
+		{{ sent_B_audio_form.sent_B_audio(class="form-control") }}
+		{{ sent_B_audio_form.upload_sent_B_audio }}
 	</form>
 
 	<form method="POST">
