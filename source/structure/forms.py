@@ -43,7 +43,7 @@ class RightSentBForm(FlaskForm):
     sent_pinyin_B = StringField('sent_pinyin_B')
     sent_lang_B = StringField('sent_lang_B')
     sent_lit_B = StringField('sent_lit_B')
-    submit_B = SubmitField('submit_B')
+    submit_B = SubmitField(' ')
 
 
 class WrongSentForm(FlaskForm):

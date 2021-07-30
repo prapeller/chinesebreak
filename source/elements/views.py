@@ -1,9 +1,14 @@
 from flask import render_template, url_for, redirect, Blueprint, request, flash
 from source import db
+from source import app
 from source.elements.forms import ButtonAddForm, ButtonDeleteForm, UploadImageForm, UploadAudioForm, WordForm, \
-    BackButtonForm, GrammarForm
-from source.admin_panel_models import Word, Media, Grammar
+    BackButtonForm, GrammarForm, AddVideoTaskBtnForm
+from source.admin_panel_models import Word, Media, Grammar, Task
 from source.static.media_handler import add_to_word_image, add_to_word_audio
+from flask_login import current_user
+from sqlalchemy import select
+import sqlite3
+import os
 
 elements_blueprint = Blueprint('elements', __name__, url_prefix='/elements', template_folder='templates')
 
@@ -79,13 +84,27 @@ def word(word_id):
         db.session.commit()
         return redirect(url_for('elements.word', word_id=word.id))
 
+    add_video_task_btn_form = AddVideoTaskBtnForm()
+    if add_video_task_btn_form.validate_on_submit() and add_video_task_btn_form.add_video_task.data:
+        task = Task.query.filter_by(word_id=word_id).first()
+        if task:
+            return redirect(url_for('structure.render_task', task_id=task.id))
+        else:
+            new_task = Task(task_type_id=23, creator_admin_id=current_user.id, lesson_id=None)
+            new_task.word_id = word_id
+            db.session.add(new_task)
+            db.session.commit()
+            return redirect(url_for('structure.render_task', task_id=new_task.id))
+
     return render_template('word.html',
+                           back_btn=back_btn,
                            word=word,
                            image_name=image_name,
                            audio_name=audio_name,
                            word_image_form=word_image_form,
                            word_audio_form=word_audio_form,
-                           button_delete=button_delete, back_btn=back_btn,
+                           add_video_task_btn_form=add_video_task_btn_form,
+                           button_delete=button_delete,
                            word_form=word_form,
                            )
 
@@ -134,6 +153,18 @@ def grammar(grammar_id):
     if back_btn.validate_on_submit() and back_btn.back.data:
         return redirect(url_for('elements.grammars'))
 
+    add_video_task_btn_form = AddVideoTaskBtnForm()
+    if add_video_task_btn_form.validate_on_submit() and add_video_task_btn_form.add_video_task.data:
+        task = Task.query.filter_by(grammar_id=grammar_id).first()
+        if task:
+            return redirect(url_for('structure.render_task', task_id=task.id))
+        else:
+            new_task = Task(task_type_id=24, creator_admin_id=current_user.id, lesson_id=None)
+            new_task.grammar_id = grammar_id
+            db.session.add(new_task)
+            db.session.commit()
+            return redirect(url_for('structure.render_task', task_id=new_task.id))
+
     button_delete = ButtonDeleteForm()
     if button_delete.validate_on_submit() and button_delete.delete.data:
         db.session.delete(grammar)
@@ -165,5 +196,6 @@ def grammar(grammar_id):
     return render_template('grammar.html',
                            grammar=grammar,
                            grammar_form=grammar_form,
+                           add_video_task_btn_form=add_video_task_btn_form,
                            button_delete=button_delete, back_btn=back_btn,
                            )

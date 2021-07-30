@@ -193,9 +193,12 @@ class Task(db.Model):
     task_type_id = db.Column(db.ForeignKey('task_types.id', ondelete='SET NULL', onupdate='CASCADE'), index=True)
     creator_admin_id = db.Column(db.ForeignKey('admins.id', ondelete='SET NULL', onupdate='CASCADE'), index=True)
     lesson_id = db.Column(db.ForeignKey('lessons.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
+    word_id = db.Column(db.ForeignKey('words.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
+    grammar_id = db.Column(db.ForeignKey('grammars.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
 
     video_id = db.Column(db.ForeignKey('media.id'))
     videos = db.relationship('Media', foreign_keys=[video_id], cascade='all, delete')
+
 
     # image_ids = media['sent_images_id']
     # images = db.relationship('Media', foreign_keys=image_ids, cascade='all, delete')
@@ -244,6 +247,8 @@ class Word(db.Model):
     images = db.relationship('Media', foreign_keys=[image_id], cascade='all, delete')
     audios = db.relationship('Media', foreign_keys=[audio_id], cascade='all, delete')
     videos = db.relationship('Media', foreign_keys=[video_id], cascade='all, delete')
+    tasks = db.relationship('Task', backref='word')
+
 
     def __repr__(self):
         return f'id: {self.id}, char: {self.char}, pinyin: {self.pinyin}, lang: {self.lang}, lit: {self.lit}'
@@ -260,6 +265,8 @@ class Grammar(db.Model):
     lang = db.Column(db.String(512), index=True)
     lit = db.Column(db.String(512), index=True)
     structure = db.Column(db.String(512), index=True)
+
+    tasks = db.relationship('Task', backref='grammar')
 
     def __repr__(self):
         return f'id: {self.id}, name: {self.name}'

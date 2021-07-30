@@ -1,0 +1,230 @@
+{% extends 'base.html' %}
+
+{% block title %}
+	{{ task_type.id }}_{{ task_type.name }}
+{% endblock %}
+
+
+{% block content %}
+
+	<div class="header puzzle-task-type">
+
+		<form method="POST">
+			{{ back_btn.hidden_tag() }}
+			<div class="back-btn-box">
+				{{ back_btn.back(class="back-btn-small") }}
+			</div>
+		</form>
+
+		<div class="header-text">
+			<p class="display-5 fw-bold">{{ task_type.id }}_{{ task_type.name }}</p>
+			<p>{{ task }}</p>
+		</div>
+	</div>
+
+	<p class="display-6">review_video:</p>
+	<video class="video" src="{{ url_for(endpoint='static', filename='video/'+ video_name) }}" controls></video>
+
+	<form method="POST" enctype="multipart/form-data">
+		{{ video_form.hidden_tag() }}
+		{{ video_form.video(class="form-control") }}
+		{{ video_form.upload }}
+	</form>
+
+	<p class="display-6">task_words:</p>
+
+	<div class="task-words">
+		{% for word in task_words %}
+			{% set word_ind = task_words.index(word) %}
+
+			{% if word.id in active_task_words_id_list %}
+
+				<div class="task-word">
+					<div class="task-word-box active-word">
+						<div class="cb_pinyin">{{ word.pinyin }}</div>
+						<div class="cb_char">{{ word.char }}</div>
+					</div>
+
+					<div class="right-up-btn-box">
+						<a href="{{ url_for('structure.remove_from_task_word', task_id=task.id, word_id=word.id) }}">
+							<button class="btn-close"></button>
+						</a>
+					</div>
+{#					<div class="under-word-btn-box form-switch">#}
+{#						<input href="javascript://" type="checkbox" class="form-check-input active-word-checkbox"#}
+{#						       checked#}
+{#						       onchange="Sijax.request('act_deact_word_req', [{{ word.id }}]);">#}
+{#					</div>#}
+
+{#					{% if task_grammars_id_list[word_ind] != 0 %}#}
+{#						<div class="under-word-btn-box form-switch">#}
+{#							<input href="javascript://" type="checkbox" class="form-check-input active-grammar-checkbox"#}
+{#							       checked#}
+{#							       onchange="Sijax.request('prepare_to_task_to_grammar_req', [{{ word.id }}]);">#}
+{#						</div>#}
+{#					{% else %}#}
+{#						<div class="under-word-btn-box form-switch">#}
+{#							<input href="javascript://" type="checkbox" class="form-check-input"#}
+{#							       onchange="Sijax.request('prepare_to_task_to_grammar_req', [{{ word.id }}]);">#}
+{#						</div>#}
+{#					{% endif %}#}
+
+{#					{% if to_display_words_id_lst[word_ind] != 0 %}#}
+{#						<div class="under-word-btn-box form-switch">#}
+{#							<input href="javascript://" type="checkbox" class="form-check-input display-word-checkbox"#}
+{#							       checked#}
+{#							       onchange="Sijax.request('display_undisplay_word_req', [{{ word.id }}]);">#}
+{#						</div>#}
+{#					{% else %}#}
+{#						<div class="under-word-btn-box form-switch">#}
+{#							<input href="javascript://" type="checkbox" class="form-check-input"#}
+{#							       onchange="Sijax.request('display_undisplay_word_req', [{{ word.id }}]);">#}
+{#						</div>#}
+{#					{% endif %}#}
+
+				</div>
+
+			{% else %}
+				<div class="task-word">
+					<div class="task-word-box inactive-word">
+						<div class="ib_pinyin">{{ word.pinyin }}</div>
+						<div class="ib_char">{{ word.char }}</div>
+					</div>
+					<div class="right-up-btn-box">
+						<a href="{{ url_for('structure.remove_from_task_word', task_id=task.id, word_id=word.id) }}">
+							<button class="btn-close"></button>
+						</a>
+					</div>
+{#					<div class="under-word-btn-box form-switch">#}
+{#						<input href="javascript://" type="checkbox" class="form-check-input"#}
+{#						       onchange="Sijax.request('act_deact_word_req', [{{ word.id }}]);">#}
+{#					</div>#}
+
+{#					{% if task_grammars_id_list[word_ind] != 0 %}#}
+{#						<div class="under-word-btn-box form-switch">#}
+{#							<input href="javascript://" type="checkbox" class="form-check-input active-grammar-checkbox"#}
+{#							       checked#}
+{#							       onchange="Sijax.request('prepare_to_task_to_grammar_req', [{{ word.id }}]);">#}
+{#						</div>#}
+{#					{% else %}#}
+{#						<div class="under-word-btn-box form-switch">#}
+{#							<input href="javascript://" type="checkbox" class="form-check-input"#}
+{#							       onchange="Sijax.request('prepare_to_task_to_grammar_req', [{{ word.id }}]);">#}
+{#						</div>#}
+{#					{% endif %}#}
+
+{#					{% if to_display_words_id_lst[word_ind] != 0 %}#}
+{#						<div class="under-word-btn-box form-switch">#}
+{#							<input href="javascript://" type="checkbox" class="form-check-input display-word-checkbox"#}
+{#							       checked#}
+{#							       onchange="Sijax.request('display_undisplay_word_req', [{{ word.id }}]);">#}
+{#						</div>#}
+{#					{% else %}#}
+{#						<div class="under-word-btn-box form-switch">#}
+{#							<input href="javascript://" type="checkbox" class="form-check-input"#}
+{#							       onchange="Sijax.request('display_undisplay_word_req', [{{ word.id }}]);">#}
+{#						</div>#}
+{#					{% endif %}#}
+
+				</div>
+
+			{% endif %}
+		{% endfor %}
+	</div>
+
+	<p class="display-6">search_elements:</p>
+
+	<form class="d-flex nav-item my-lg-0" method="GET">
+		<input class="form-control me-2" type="search" placeholder="Search" name="search_key">
+		<button class="btn btn-outline-success" type="submit">Search</button>
+	</form>
+
+	<div class="search_elems">
+		<div class="search_grammars">
+			{% for grammar in grammars[:5] %}
+				<div class="list-group">
+					<a href="{{ url_for('structure.add_to_task_grammar', task_id=task.id, grammar_id=grammar.id) }}"
+					   class="list-group-item list-group-item-action ">{{ grammar }}</a>
+				</div>
+			{% endfor %}
+
+			<form method="POST">
+				{{ button_add_grammar.hidden_tag() }}
+				<div class="d-grid">
+					{{ button_add_grammar.add_grammar(class="btn btn_add") }}
+				</div>
+			</form>
+		</div>
+
+		<div class="search_words">
+			{% for word in words[:5] %}
+				<div class="list-group">
+					<a href="{{ url_for('structure.add_to_task_word', task_id=task.id, word_id=word.id) }}"
+					   class="list-group-item list-group-item-action ">{{ word }}</a>
+				</div>
+			{% endfor %}
+
+			<form method="POST">
+				{{ button_add_word.hidden_tag() }}
+				<div class="d-grid">
+					{{ button_add_word.add_word(class="btn btn_add") }}
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<form method="POST">
+		{{ sent_form.hidden_tag() }}
+		<p class="display-6">sent_lang:</p>
+		{{ sent_form.sent_lang_A(class="form-control") }}
+		<p class="display-6">sent_lit:</p>
+		{{ sent_form.sent_lit_A(class="form-control") }}
+		{{ sent_form.submit }}
+	</form>
+
+	{#	<audio controls class="mb_10 ml_mr_auto br_20 shadow_light">#}
+	{#		<source src="{{ url_for('static', filename='audio/' + sent_A_audio_name) }}">#}
+	{#	</audio>#}
+	{##}
+	{#	<form method="POST" enctype="multipart/form-data">#}
+	{#		{{ sent_A_audio_form.hidden_tag() }}#}
+	{#		{{ sent_A_audio_form.sent_A_audio(class="form-control") }}#}
+	{#		{{ sent_A_audio_form.upload_sent_A_audio }}#}
+	{#	</form>#}
+
+	<p class="display-6">active_elements:</p>
+
+	<div class="active-elements">
+		{% for word in active_task_words %}
+			<div class="task-word-box active-word">
+				<div>
+					<div class="cb_pinyin">{{ word.pinyin }}</div>
+					<div class="cb_char">{{ word.char }}</div>
+				</div>
+			</div>
+		{% endfor %}
+
+		{% for grammar in task_grammars %}
+			{% if grammar.id in task_grammars_id_list %}
+				<div class="task-grammar-box active-grammar">
+					<div>
+						<div class="cb_pinyin">{{ grammar.pinyin }}</div>
+						<div class="cb_name">{{ grammar.name }}</div>
+					</div>
+				</div>
+			{% endif %}
+		{% endfor %}
+	</div>
+
+	{% if task.elements.get('grammar_id') and task.elements.get('grammar_id')[word_ind] != 0 %}
+		{{ task_grammars[word_ind] }}
+	{% endif %}
+
+	<form method="POST">
+		{{ button_delete_task.hidden_tag() }}
+		<div class="d-grid">
+			{{ button_delete_task.delete(class="btn btn_del") }}
+		</div>
+	</form>
+
+{% endblock %}

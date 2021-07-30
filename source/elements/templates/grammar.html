@@ -44,6 +44,13 @@
 		{{ grammar_form.update }}
 	</form>
 
+		<form method="POST">
+		{{ add_video_task_btn_form.hidden_tag() }}
+		<div class="d-grid">
+			{{ add_video_task_btn_form.add_video_task(class="btn btn_add_video_task") }}
+		</div>
+	</form>
+
 	<form method="POST">
 		{{ button_delete.hidden_tag() }}
 		<div class="d-grid">

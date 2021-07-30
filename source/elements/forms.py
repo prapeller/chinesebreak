@@ -51,3 +51,7 @@ class GrammarForm(FlaskForm):
     lit = StringField('lit')
     structure = StringField('structure')
     update = SubmitField('update')
+
+
+class AddVideoTaskBtnForm(FlaskForm):
+    add_video_task = SubmitField(' ')

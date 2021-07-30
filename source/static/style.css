@@ -35,6 +35,16 @@
     margin: auto;
 }
 
+.btn_add_video_task {
+    width: 62px;
+    height: 62px;
+    background-image: url("image/video_task_btn.svg");
+    background-repeat: no-repeat;
+    border: none;
+    background-color: transparent;
+    margin: auto;
+}
+
 .btn_add {
     margin: 15px auto;
     height: auto;
@@ -237,6 +247,10 @@
     color: white !important;
 }
 
+.puzzle-task-type {
+    background-color: #fce5cd !important;
+}
+
 .active-elements {
     margin-bottom: 30px;
 }
@@ -307,6 +321,7 @@
 }
 
 .right-sent-box {
+    position: relative;
     padding: 2px 5px 5px 5px;
     box-sizing: border-box;
     display: block;

@@ -7,7 +7,7 @@
 
 {% block content %}
 
-	<div class="header sent-task-type">
+	<div class="header puzzle-task-type">
 
 		<form method="POST">
 			{{ back_btn.hidden_tag() }}
@@ -22,56 +22,13 @@
 		</div>
 	</div>
 
-	<p class="display-6">choose_words:</p>
-
-	<div class="choose-words">
-		{% for word in active_task_words %}
-			<div class="task-word-box active-word">
-				<div>
-					<div class="cb_pinyin">{{ word.pinyin }}</div>
-					<div class="cb_char">{{ word.char }}</div>
-				</div>
-			</div>
-		{% endfor %}
-
-		{% for wrong_task_word in wrong_task_words %}
-			<div class="task-word-box inactive-word">
-				<div>
-					<div class="cb_pinyin">{{ wrong_task_word.pinyin }}</div>
-					<div class="cb_char">{{ wrong_task_word.char }}</div>
-				</div>
-
-				<div class="right-up-btn-box">
-					<a href="{{ url_for('structure.remove_from_task_wrong_word', task_id=task.id, word_id=wrong_task_word.id) }}">
-						<button class="btn-close"></button>
-					</a>
-				</div>
-
-			</div>
-		{% endfor %}
-
-	</div>
-
-	<form class="d-flex nav-item my-lg-0" method="GET">
-		<input class="form-control me-2" type="search" placeholder="Search" name="search_wrong_words_key">
-		<button class="btn btn-outline-success" type="submit">Search</button>
-	</form>
-
-	<div class="search_wrong_words">
-		{% for word in wrong_words[:1] %}
-			<div class="list-group">
-				<a href="{{ url_for('structure.add_to_task_wrong_word', task_id=task.id, word_id=word.id) }}"
-				   class="list-group-item list-group-item-action ">{{ word }}</a>
-			</div>
-		{% endfor %}
-
-	</div>
-
-	<p class="display-6">task_words:</p>
+	<p class="display-6">sent_char:</p>
+	<p class="display-6">sent_pinyin:</p>
 
 	<div class="task-words">
 		{% for word in task_words %}
 			{% set word_ind = task_words.index(word) %}
+
 			{% if word.id in active_task_words_id_list %}
 
 				<div class="task-word">
@@ -93,8 +50,7 @@
 
 					{% if task_grammars_id_list[word_ind] != 0 %}
 						<div class="under-word-btn-box form-switch">
-							<input href="javascript://" type="checkbox"
-							       class="form-check-input active-grammar-checkbox"
+							<input href="javascript://" type="checkbox" class="form-check-input active-grammar-checkbox"
 							       checked
 							       onchange="Sijax.request('prepare_to_task_to_grammar_req', [{{ word.id }}]);">
 						</div>
@@ -125,7 +81,7 @@
 
 					{% if task_grammars_id_list[word_ind] != 0 %}
 						<div class="under-word-btn-box form-switch">
-							<input href="javascript://" type="checkbox" class="form-check-input active-grammar-box"
+							<input href="javascript://" type="checkbox" class="form-check-input active-grammar-checkbox"
 							       checked
 							       onchange="Sijax.request('prepare_to_task_to_grammar_req', [{{ word.id }}]);">
 						</div>
@@ -136,62 +92,11 @@
 						</div>
 					{% endif %}
 
-					{% if task.elements.get('grammar_id') and task.elements.get('grammar_id')[word_ind] != 0 %}
-						{{ task_grammars[word_ind] }}
-					{% endif %}
-
 				</div>
 
 			{% endif %}
 		{% endfor %}
 	</div>
-
-	<form method="POST">
-		{{ sent_form.hidden_tag() }}
-		<p class="display-6">sent_lang:</p>
-		{{ sent_form.sent_lang_A(class="form-control") }}
-		<p class="display-6">sent_lit:</p>
-		{{ sent_form.sent_lit_A(class="form-control") }}
-		{{ sent_form.submit }}
-	</form>
-
-	<audio controls class="mb_10 ml_mr_auto br_20 shadow_light">
-		<source src="{{ url_for('static', filename='audio/' + sent_A_audio_name) }}">
-	</audio>
-
-	<form method="POST" enctype="multipart/form-data">
-		{{ sent_A_audio_form.hidden_tag() }}
-		{{ sent_A_audio_form.sent_A_audio(class="form-control") }}
-		{{ sent_A_audio_form.upload_sent_A_audio }}
-	</form>
-
-	<p class="display-6">active_elements:</p>
-
-	<div class="active-elements">
-		{% for word in active_task_words %}
-			<div class="task-word-box active-word">
-				<div>
-					<div class="cb_pinyin">{{ word.pinyin }}</div>
-					<div class="cb_char">{{ word.char }}</div>
-				</div>
-			</div>
-		{% endfor %}
-
-		{% for grammar in task_grammars %}
-			{% if grammar.id in task_grammars_id_list %}
-				<div class="task-grammar-box active-grammar">
-					<div>
-						<div class="cb_pinyin">{{ grammar.pinyin }}</div>
-						<div class="cb_name">{{ grammar.name }}</div>
-					</div>
-				</div>
-			{% endif %}
-		{% endfor %}
-	</div>
-
-{#	{% if task.elements.get('grammar_id') and task.elements.get('grammar_id')[word_ind] != 0 %}#}
-{#		{{ task_grammars[word_ind] }}#}
-{#	{% endif %}#}
 
 	<p class="display-6">search_elements:</p>
 
@@ -200,7 +105,7 @@
 		<button class="btn btn-outline-success" type="submit">Search</button>
 	</form>
 
-<div class="search_elems">
+	<div class="search_elems">
 		<div class="search_grammars">
 			{% for grammar in grammars[:5] %}
 				<div class="list-group">
@@ -233,6 +138,118 @@
 			</form>
 		</div>
 	</div>
+
+	{% for wrong_task_word in wrong_task_words %}
+		<div class="task-word-box inactive-word">
+			<div>
+				<div class="cb_pinyin">{{ wrong_task_word.pinyin }}</div>
+				<div class="cb_char">{{ wrong_task_word.char }}</div>
+			</div>
+
+			<div class="right-up-btn-box">
+				<a href="{{ url_for('structure.remove_from_task_wrong_word', task_id=task.id, word_id=wrong_task_word.id) }}">
+					<button class="btn-close"></button>
+				</a>
+			</div>
+
+		</div>
+	{% endfor %}
+
+	<form method="POST">
+		{{ sent_form.hidden_tag() }}
+		<p class="display-6">sent_lang:</p>
+		{{ sent_form.sent_lang_A(class="form-control") }}
+		<p class="display-6">sent_lit:</p>
+		{{ sent_form.sent_lit_A(class="form-control") }}
+		{{ sent_form.submit }}
+	</form>
+
+
+
+	<audio controls class="mb_10 ml_mr_auto br_20 shadow_light">
+		<source src="{{ url_for('static', filename='audio/' + sent_A_audio_name) }}">
+	</audio>
+
+	<form method="POST" enctype="multipart/form-data">
+		{{ sent_A_audio_form.hidden_tag() }}
+		{{ sent_A_audio_form.sent_A_audio(class="form-control") }}
+		{{ sent_A_audio_form.upload_sent_A_audio }}
+	</form>
+
+
+	<p class="display-6">right_puzzle_words:</p>
+
+	{% for right_sent in right_sent_lst %}
+		<div class="right-sent-box">
+			<div class="rs_lang">
+				{{ right_sent }}
+			</div>
+			<div class="right-up-btn-box">
+				<a href="{{ url_for('structure.remove_from_task_right_sent', task_id=task.id, sent_idx=right_sent_lst.index(right_sent)) }}">
+					<button class="btn-close"></button>
+				</a>
+			</div>
+		</div>
+	{% endfor %}
+
+
+	<form method="POST">
+		{{ add_right_sent_form.hidden_tag() }}
+		{{ add_right_sent_form.sent_lang_B(class="form-control") }}
+		<div class="d-grid">
+			{{ add_right_sent_form.submit_B(class="btn btn_add") }}
+		</div>
+	</form>
+
+	<p class="display-6">wrong_puzzle_words:</p>
+
+	{% for wrong_sent in wrong_sent_lst %}
+		<div class="wrong-sent-box">
+			<div class="ws_lang">
+				{{ wrong_sent }}
+			</div>
+			<div class="right-up-btn-box">
+				<a href="{{ url_for('structure.remove_from_task_wrong_sent', task_id=task.id, sent_idx=wrong_sent_lst.index(wrong_sent)) }}">
+					<button class="btn-close"></button>
+				</a>
+			</div>
+		</div>
+	{% endfor %}
+
+
+	<form method="POST">
+		{{ add_wrong_sent_form.hidden_tag() }}
+		{{ add_wrong_sent_form.sent_lang(class="form-control") }}
+		<div class="d-grid">
+			{{ add_wrong_sent_form.add_wrong_sent(class="btn btn_add") }}
+		</div>
+	</form>
+
+		<p class="display-6">active_elements:</p>
+
+	<div class="active-elements">
+		{% for word in active_task_words %}
+			<div class="task-word-box active-word">
+				<div>
+					<div class="cb_pinyin">{{ word.pinyin }}</div>
+					<div class="cb_char">{{ word.char }}</div>
+				</div>
+			</div>
+		{% endfor %}
+
+		{% for grammar in task_grammars %}
+			{% if grammar.id in task_grammars_id_list %}
+				<div class="task-grammar-box active-grammar">
+					<div>
+						<div class="cb_pinyin">{{ grammar.pinyin }}</div>
+						<div class="cb_name">{{ grammar.name }}</div>
+					</div>
+				</div>
+			{% endif %}
+		{% endfor %}
+	</div>
+
+
 	<form method="POST">
 		{{ button_delete_task.hidden_tag() }}
 		<div class="d-grid">

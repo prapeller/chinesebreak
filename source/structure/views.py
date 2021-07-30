@@ -189,11 +189,16 @@ def lesson(lesson_id):
                            )
 
 
-@structure_blueprint.route('render_task<int:task_id>/', methods=["GET", "POST"])
+@structure_blueprint.route('render_task_<int:task_id>/', methods=["GET", "POST"])
 def render_task(task_id):
     task = Task.query.filter_by(id=task_id).first()
     return redirect(url_for(f'task_{task.task_type_id}_bp.render', task_id=task.id))
 
+
+# @structure_blueprint.route('render_task_<int:task_id>_for_word_<int:word_id>/', methods=["GET", "POST"])
+# def render_word_video_task(task_id, word_id):
+#     task = Task.query.filter_by(id=task_id).first()
+#     return redirect(url_for(f'task_{task.task_type_id}_bp.render', word_id=word_id, task_id=task.id))
 
 @structure_blueprint.route('add_to_task_<int:task_id>_word_<int:word_id>/', methods=["GET", "POST"])
 def add_to_task_word(task_id, word_id):
@@ -219,7 +224,6 @@ def add_to_task_wrong_word(task_id, word_id):
     task.elements['words_id_wrong'] = wrong_words_id_list
     db.session.commit()
     return redirect(url_for('structure.render_task', task_id=task_id))
-
 
 @structure_blueprint.route('remove_from_task_<int:task_id>_wrong_word_<int:word_id>/', methods=["GET", "POST"])
 def remove_from_task_wrong_word(task_id, word_id):
@@ -266,6 +270,18 @@ def remove_from_task_wrong_sent(task_id, sent_idx):
     if wrong_sent_lang_lst:
         wrong_sent_lang_lst.pop(sent_idx)
         task.wrong_sentences['sent_lang'] = wrong_sent_lang_lst
+
+    db.session.commit()
+    return redirect(url_for('structure.render_task', task_id=task_id))
+
+@structure_blueprint.route('remove_from_task_<int:task_id>_right_sent_idx_<int:sent_idx>/', methods=["GET", "POST"])
+def remove_from_task_right_sent(task_id, sent_idx):
+    task = Task.query.filter_by(id=task_id).first()
+
+    right_sent_lang_lst = task.right_sentences['sent_lang_B']
+    if right_sent_lang_lst:
+        right_sent_lang_lst.pop(sent_idx)
+        task.right_sentences['sent_lang_B'] = right_sent_lang_lst
 
     db.session.commit()
     return redirect(url_for('structure.render_task', task_id=task_id))
