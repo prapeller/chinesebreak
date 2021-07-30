@@ -90,7 +90,7 @@ def word(word_id):
         if task:
             return redirect(url_for('structure.render_task', task_id=task.id))
         else:
-            new_task = Task(task_type_id=23, creator_admin_id=current_user.id, lesson_id=None)
+            new_task = Task(task_type_id=22, creator_admin_id=current_user.id, lesson_id=None)
             new_task.word_id = word_id
             db.session.add(new_task)
             db.session.commit()
@@ -159,7 +159,7 @@ def grammar(grammar_id):
         if task:
             return redirect(url_for('structure.render_task', task_id=task.id))
         else:
-            new_task = Task(task_type_id=24, creator_admin_id=current_user.id, lesson_id=None)
+            new_task = Task(task_type_id=23, creator_admin_id=current_user.id, lesson_id=None)
             new_task.grammar_id = grammar_id
             db.session.add(new_task)
             db.session.commit()

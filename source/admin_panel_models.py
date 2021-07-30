@@ -155,7 +155,8 @@ class Task(db.Model):
         # слова, которые должны отображаться при показе задания пользователю
         "words_id_to_display": [],
         # неправильные слова
-        "words_id_wrong": []
+        "words_id_wrong": [],
+        "grammars_id_wrong": []
     })
     right_sentences = db.Column(MutableDict.as_mutable(db.JSON), default={
         # предлоежние на китайском

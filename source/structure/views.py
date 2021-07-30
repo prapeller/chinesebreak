@@ -295,6 +295,23 @@ def add_to_task_grammar(task_id, grammar_id):
     db.session.commit()
     return redirect(url_for('structure.render_task', task_id=task_id))
 
+@structure_blueprint.route('add_to_task_<int:task_id>_wrong_grammar_<int:grammar_id>/', methods=["GET", "POST"])
+def add_to_task_wrong_grammar(task_id, grammar_id):
+    task = Task.query.filter_by(id=task_id).first()
+    wrong_grammar_id_list = task.elements['grammars_id_wrong']
+    wrong_grammar_id_list.append(grammar_id)
+    task.elements['grammars_id_wrong'] = wrong_grammar_id_list
+    db.session.commit()
+    return redirect(url_for('structure.render_task', task_id=task_id))
+
+@structure_blueprint.route('remove_from_task_<int:task_id>_wrong_grammar_<int:grammar_id>/', methods=["GET", "POST"])
+def remove_from_task_wrong_grammar(task_id, grammar_id):
+    task = Task.query.filter_by(id=task_id).first()
+    wrong_grammar_id_list = task.elements['grammars_id_wrong']
+    wrong_grammar_id_list.remove(grammar_id)
+    task.elements['grammars_id_wrong'] = wrong_grammar_id_list
+    db.session.commit()
+    return redirect(url_for('structure.render_task', task_id=task_id))
 
 @structure_blueprint.route('remove_from_task_<int:task_id>_image_<int:sent_image_id>/', methods=["GET", "POST"])
 def remove_from_task_image(task_id, sent_image_id):

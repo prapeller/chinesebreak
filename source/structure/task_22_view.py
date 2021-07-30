@@ -6,14 +6,14 @@ from source.structure.forms import UploadSentAAudioForm, ButtonAddWordForm, Butt
     BackButtonForm, RightSentForm, UploadVideoForm
 from source.static.media_handler import add_to_task_video, add_to_task_sent_A_audio
 
-task_24_bp = Blueprint('task_24_bp', __name__, url_prefix='/task_24_grammar_choose_from_video', template_folder='templates')
+task_22_bp = Blueprint('task_22_bp', __name__, url_prefix='/task_22_word_write_from_video', template_folder='templates')
 
 
-@flask_sijax.route(task_24_bp, 'task_<int:task_id>/', methods=["GET", "POST"])
+@flask_sijax.route(task_22_bp, 'task_<int:task_id>/', methods=["GET", "POST"])
 def render(task_id):
     task = Task.query.filter_by(id=task_id).first()
     task_type = TaskType.query.filter_by(id=task.task_type_id).first()
-    grammar_id = task.grammar_id
+    word_id = task.word_id
 
     if task.media.get('sent_audio_A_id'):
         sent_A_audio = Media.query.filter_by(id=task.media.get('sent_audio_A_id')[0]).first()
@@ -28,7 +28,6 @@ def render(task_id):
     else:
         sent_video = None
         video_name = 'None'
-
     video_form = UploadVideoForm()
     if video_form.validate_on_submit() and video_form.video.data:
         task_video = add_to_task_video(task=task, file=video_form.video.data)
@@ -50,9 +49,15 @@ def render(task_id):
     to_display_words = [Word.query.filter_by(id=id).first() for id in to_display_words_id_lst
                          if Word.query.filter_by(id=id).first()]
 
+    sent_images_id_lst = task.media.get('sent_images_id')
+    if sent_images_id_lst:
+        sent_images = [Media.query.filter_by(id=id).first() for id in sent_images_id_lst]
+    else:
+        sent_images = []
+
     back_btn = BackButtonForm()
     if back_btn.validate_on_submit() and back_btn.back.data:
-        return redirect(url_for('elements.grammar', grammar_id=grammar_id))
+        return redirect(url_for('elements.word', word_id=word_id))
 
     sent_form = RightSentForm()
     if sent_form.validate_on_submit() and sent_form.submit.data:
@@ -64,8 +69,11 @@ def render(task_id):
 
         db.session.commit()
         flash('sent_lang update success')
-    sent_form.sent_lang_A.data = task.right_sentences.get('sent_lang_A')[0] if task.right_sentences.get('sent_lang_A') else ''
-    sent_form.sent_lit_A.data = task.right_sentences.get('sent_lit_A')[0] if task.right_sentences.get('sent_lit_A') else ''
+    elif request.method == "GET":
+        sent_form.sent_lang_A.data = task.right_sentences.get('sent_lang_A')[0] if task.right_sentences.get(
+            'sent_lang_A') else ''
+        sent_form.sent_lit_A.data = task.right_sentences.get('sent_lit_A')[0] if task.right_sentences.get(
+            'sent_lit_A') else ''
 
     sent_A_audio_form = UploadSentAAudioForm()
     if sent_A_audio_form.validate_on_submit() and sent_A_audio_form.sent_A_audio.data:
@@ -128,6 +136,7 @@ def render(task_id):
         db.session.commit()
 
     def prepare_to_task_to_grammar(obj_response, word_id):
+        # task = Task.query.filter_by(id=task_id).first()
         words_id_list = task.elements['words_id']
         word_idx = words_id_list.index(word_id)
         grammar_id_list = task.elements['grammar_id']
@@ -139,6 +148,7 @@ def render(task_id):
 
         task.elements['grammar_id'] = grammar_id_list
         db.session.commit()
+        # return redirect(url_for('structure.render_task', task_id=task_id))
 
     search_val = request.args.get('search_key')
     if search_val:
@@ -157,9 +167,9 @@ def render(task_id):
         g.sijax.register_callback('display_undisplay_word_req', display_undisplay_word)
         return g.sijax.process_request()
 
-    return render_template('tasks/24_grammar_choose_from_video.html',
+    return render_template('tasks/22_word_write_from_video.html',
                            task=task, task_type=task_type,
-                           # sent_images=sent_images,
+                           sent_images=sent_images,
                            video_form=video_form,
                            sent_video=sent_video,
                            video_name=video_name,

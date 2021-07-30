@@ -91,8 +91,8 @@ from source.structure.task_18_view import task_18_bp
 from source.structure.task_19_view import task_19_bp
 from source.structure.task_20_view import task_20_bp
 from source.structure.task_21_view import task_21_bp
+from source.structure.task_22_view import task_22_bp
 from source.structure.task_23_view import task_23_bp
-from source.structure.task_24_view import task_24_bp
 
 app.register_blueprint(admin_panel_blueprint)
 app.register_blueprint(admins_blueprint)
@@ -119,5 +119,5 @@ app.register_blueprint(task_18_bp)
 app.register_blueprint(task_19_bp)
 app.register_blueprint(task_20_bp)
 app.register_blueprint(task_21_bp)
+app.register_blueprint(task_22_bp)
 app.register_blueprint(task_23_bp)
-app.register_blueprint(task_24_bp)

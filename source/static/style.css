@@ -124,6 +124,7 @@
 }
 
 .task-grammar-box {
+    position: relative;
     padding: 2px 5px 5px 5px;
     box-sizing: border-box;
     display: block;
@@ -145,6 +146,10 @@
 
 .inactive-word {
     position: relative;
+    border: 4px solid #FF819C;
+}
+
+.inactive-grammar {
     border: 4px solid #FF819C;
 }
 
